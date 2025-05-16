@@ -14,8 +14,7 @@ from user_management import (
 )
 # I am trying to load my environment variables from a existing env file I created.
 load_dotenv()
-# I am trying to load my environment variables from a existing env file I created.
-load_dotenv()
+
 openai_api_key = os.getenv("OPENAI_API_KEY")
 if not openai_api_key:
     raise ValueError("No OpenAI API key found")
