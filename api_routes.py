@@ -12,23 +12,13 @@ from user_management import (
     handle_login, handle_register, handle_logout, handle_get_user,
     handle_save_chat, handle_get_chat_history, handle_get_chat, handle_delete_chat
 )
-# I am trying to load my environment variables from a existing env file I created.
+from openai_wrapper import get_openai_client
+
+# Load environment variables
 load_dotenv()
 
-openai_api_key = os.getenv("OPENAI_API_KEY")
-if not openai_api_key:
-    raise ValueError("No OpenAI API key found")
-
-# Initialize OpenAI client safely
-try:
-    client = openai.OpenAI(api_key=openai_api_key)
-except TypeError as e:
-    if 'proxies' in str(e):
-        from openai import Client
-        client = Client(api_key=openai_api_key)
-    else:
-        raise
-
+# Get OpenAI client
+client = get_openai_client()
 # it is a System message for chat API that will be sent to openAI
 SYSTEM_MESSAGE = """
 You are a knowledgeable and trustworthy legal assistant trained in Indian laws, legal processes, and rights.
