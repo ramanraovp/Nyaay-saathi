@@ -14,16 +14,21 @@ from user_management import (
 )
 # I am trying to load my environment variables from a existing env file I created.
 load_dotenv()
+# I am trying to load my environment variables from a existing env file I created.
+load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 if not openai_api_key:
     raise ValueError("No OpenAI API key found")
 
-# Initialize without proxies to avoid the error
+# Initialize OpenAI client safely
 try:
-    client = openai.OpenAI(api_key=openai_api_key, http_client=None)
-except TypeError:
-    # Fallback option if the above doesn't work
-    client = openai.Client(api_key=openai_api_key)
+    client = openai.OpenAI(api_key=openai_api_key)
+except TypeError as e:
+    if 'proxies' in str(e):
+        from openai import Client
+        client = Client(api_key=openai_api_key)
+    else:
+        raise
 
 # it is a System message for chat API that will be sent to openAI
 SYSTEM_MESSAGE = """
