@@ -98,6 +98,34 @@ def test_route():
     <p>Current working directory: {os.getcwd()}</p>
     <p>Environment: {os.environ.get('FLASK_ENV', 'Not set')}</p>
     '''
+# Create a demo account
+def ensure_demo_account():
+    from werkzeug.security import generate_password_hash
+    import uuid
+    from datetime import datetime
+    
+    users = load_users()
+    demo_email = 'demo@nyaaysaathi.com'
+    
+    if demo_email not in users['users']:
+        print("Creating demo account...")
+        user_id = str(uuid.uuid4())
+        users['users'][demo_email] = {
+            'id': user_id,
+            'name': 'Demo User',
+            'email': demo_email,
+            'password': generate_password_hash('demo123'),
+            'created_at': datetime.now().isoformat(),
+            'last_login': datetime.now().isoformat(),
+            'chat_history': []
+        }
+        save_users(users)
+        print("Demo account created!")
+
+# Add this to your initialization code
+with app.app_context():
+    # Other initialization code
+    ensure_demo_account()
 
 # Run the application
 if __name__ == '__main__':
