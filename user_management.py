@@ -180,27 +180,31 @@ def create_login_template():
 # User authentication routes handlers
 def handle_login():
     """Handle login API request"""
-    data = request.json
-    email = data.get('email', '').lower()
-    password = data.get('password', '')
-    
-    users = load_users()
-    
-    if email in users['users'] and check_password_hash(users['users'][email]['password'], password):
-        user = users['users'][email]
-        session['user_id'] = user['id']
-        session['user_email'] = email
-        session['user_name'] = user['name']
-        session.permanent = True  # Make session persistent
+    try:
+        data = request.json
+        email = data.get('email', '').lower()
+        password = data.get('password', '')
         
-        # Update last login
-        users['users'][email]['last_login'] = datetime.now().isoformat()
-        save_users(users)
+        users = load_users()
         
-        return jsonify({'success': True, 'message': 'Login successful'})
-    
-    return jsonify({'success': False, 'message': 'Invalid email or password'}), 401
-
+        if email in users['users'] and check_password_hash(users['users'][email]['password'], password):
+            user = users['users'][email]
+            session['user_id'] = user['id']
+            session['user_email'] = email
+            session['user_name'] = user['name']
+            session.permanent = True  # Make session persistent
+            
+            # Update last login
+            users['users'][email]['last_login'] = datetime.now().isoformat()
+            save_users(users)
+            
+            return jsonify({'success': True, 'message': 'Login successful'})
+        
+        return jsonify({'success': False, 'message': 'Invalid email or password'}), 401
+    except Exception as e:
+        print(f"Login error: {str(e)}")
+        return jsonify({'success': False, 'message': f'Error during login: {str(e)}'}), 500
+        
 def handle_register():
     """Handle registration API request"""
     data = request.json
