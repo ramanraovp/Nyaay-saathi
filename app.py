@@ -18,8 +18,12 @@ app = Flask(__name__, static_folder='static', static_url_path='/static')
 # Load my  environment variables
 load_dotenv()
 
+# Use a strong secret key for sessions
 app.secret_key = os.getenv("SECRET_KEY", "nyaay-saathi-random-key")
-app.config['SESSION_TYPE'] = 'filesystem'
+
+# Use secure cookies in production
+app.config['SESSION_COOKIE_SECURE'] = os.environ.get("FLASK_DEBUG", "False").lower() != "true"
+app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
