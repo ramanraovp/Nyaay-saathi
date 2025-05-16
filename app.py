@@ -1,8 +1,8 @@
-from flask import Flask, render_template, session, redirect, url_for, jsonify
+from flask import Flask, render_template, session, redirect, url_for, jsonify, request
 import os
 import uuid
 from datetime import datetime, timedelta
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import json
 
 app = Flask(__name__, static_folder='static', static_url_path='/static')
@@ -57,6 +57,104 @@ def ensure_demo_account():
         save_users(users)
         print("Demo account created!")
 
+# API Routes
+@app.route('/api/login', methods=['POST'])
+def handle_login():
+    """Handle login API request"""
+    try:
+        data = request.json
+        email = data.get('email', '').lower()
+        password = data.get('password', '')
+        
+        print(f"Login attempt for: {email}")  # Debug log
+        
+        users = load_users()
+        
+        if email in users['users'] and check_password_hash(users['users'][email]['password'], password):
+            user = users['users'][email]
+            session['user_id'] = user['id']
+            session['user_email'] = email
+            session['user_name'] = user['name']
+            session.permanent = True  # Make session persistent
+            
+            # Update last login
+            users['users'][email]['last_login'] = datetime.now().isoformat()
+            save_users(users)
+            
+            print(f"Login successful for: {email}")  # Debug log
+            return jsonify({'success': True, 'message': 'Login successful'})
+        
+        print(f"Login failed for: {email}")  # Debug log
+        return jsonify({'success': False, 'message': 'Invalid email or password'}), 401
+    except Exception as e:
+        print(f"Login error: {str(e)}")  # Debug log
+        return jsonify({'success': False, 'message': f'Error during login: {str(e)}'}), 500
+
+@app.route('/api/register', methods=['POST'])
+def handle_register():
+    """Handle registration API request"""
+    try:
+        data = request.json
+        name = data.get('name', '').strip()
+        email = data.get('email', '').lower().strip()
+        password = data.get('password', '')
+        
+        # Basic validation
+        if not name or not email or not password:
+            return jsonify({'success': False, 'message': 'All fields are required'}), 400
+        
+        if len(password) < 6:
+            return jsonify({'success': False, 'message': 'Password must be at least 6 characters'}), 400
+        
+        users = load_users()
+        
+        if email in users['users']:
+            return jsonify({'success': False, 'message': 'Email already registered'}), 400
+        
+        # Create new user
+        user_id = str(uuid.uuid4())
+        users['users'][email] = {
+            'id': user_id,
+            'name': name,
+            'email': email,
+            'password': generate_password_hash(password),
+            'created_at': datetime.now().isoformat(),
+            'last_login': datetime.now().isoformat(),
+            'chat_history': []
+        }
+        
+        save_users(users)
+        
+        # Auto login
+        session['user_id'] = user_id
+        session['user_email'] = email
+        session['user_name'] = name
+        session.permanent = True
+        
+        return jsonify({'success': True, 'message': 'Registration successful'})
+    except Exception as e:
+        print(f"Registration error: {str(e)}")
+        return jsonify({'success': False, 'message': f'Error during registration: {str(e)}'}), 500
+
+@app.route('/api/logout', methods=['POST'])
+def handle_logout():
+    """Handle logout API request"""
+    session.clear()
+    return jsonify({'success': True, 'message': 'Logged out successfully'})
+
+@app.route('/api/user', methods=['GET'])
+def handle_get_user():
+    """Handle get user information API request"""
+    if 'user_id' not in session:
+        return jsonify({'logged_in': False}), 401
+    
+    return jsonify({
+        'logged_in': True,
+        'user_id': session['user_id'],
+        'email': session['user_email'],
+        'name': session['user_name']
+    })
+
 # Routes
 @app.route('/')
 def index():
@@ -90,7 +188,6 @@ def test_route():
     <p>Session working: {'Yes' if session.get('test_count') > 0 else 'No'}</p>
     <p>Current working directory: {os.getcwd()}</p>
     <p>Environment: {os.environ.get('FLASK_ENV', 'Not set')}</p>
-    <p>User DB: {load_users()}</p>
     '''
 
 # Initialize demo account
