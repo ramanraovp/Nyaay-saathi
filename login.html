@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nyaay Saathi - Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #d09c4a;
+            --primary-color-hover: #c08c3a;
+            --text-color: #d09c4a;
+            --background-color: #000000;
+            --input-bg-color: rgba(50, 50, 50, 0.3);
+        }
+        
+        body {
+            background-color: var(--background-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+            color: var(--text-color);
+        }
+        
+        .login-container {
+            max-width: 400px;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            opacity: 0.7;
+        }
+        
+        .avatar i {
+            font-size: 40px;
+            color: var(--background-color);
+        }
+        
+        .login-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .input-field {
+            position: relative;
+            width: 100%;
+        }
+        
+        .input-field input {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            background-color: transparent;
+            border: 1px solid var(--primary-color);
+            border-radius: 25px;
+            color: var(--primary-color);
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        
+        .input-field input::placeholder {
+            color: rgba(208, 156, 74, 0.6);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+        
+        .login-btn {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+            border: none;
+            padding: 15px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .login-btn:hover {
+            background-color: var(--primary-color-hover);
+        }
+        
+        .links {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        
+        .links a:hover {
+            text-decoration: underline;
+        }
+        
+        #status-message {
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        
+        .alert {
+            padding: 10px;
+            border-radius: 25px;
+            text-align: center;
+        }
+        
+        .alert-danger {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
+        
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
+        
+        .form-container {
+            display: none;
+            width: 100%;
+        }
+        
+        .form-container.active {
+            display: block;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+        
+        .tab {
+            color: rgba(208, 156, 74, 0.6);
+            cursor: pointer;
+            font-weight: 600;
+            padding: 5px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            color: var(--primary-color);
+            position: relative;
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="avatar">
+            <i class="fas fa-user"></i>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" id="login-tab">Login</div>
+            <div class="tab" id="register-tab">Register</div>
+        </div>
+        
+        <div id="status-message"></div>
+        
+        <div class="form-container active" id="login-form">
+            <form id="login-form-element" class="login-form">
+                <div class="input-field">
+                    <input type="email" id="login-email" placeholder="Email" required>
+                </div>
+                
+                <div class="input-field">
+                    <input type="password" id="login-password" placeholder="Password" required>
+                    <span class="password-toggle" onclick="togglePassword('login-password')">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                
+                <button type="submit" class="login-btn">Login</button>
+                
+                <div class="links">
+                    <a href="#" id="switch-to-register">Create Account</a>
+                    <a href="#" id="forgot-password">Forgot Password?</a>
+                </div>
+            </form>
+        </div>
+        
+        <div class="form-container" id="register-form">
+            <form id="register-form-element" class="login-form">
+                <div class="input-field">
+                    <input type="text" id="register-name" placeholder="Full Name" required>
+                </div>
+                
+                <div class="input-field">
+                    <input type="email" id="register-email" placeholder="Email" required>
+                </div>
+                
+                <div class="input-field">
+                    <input type="password" id="register-password" placeholder="Password" required minlength="6">
+                    <span class="password-toggle" onclick="togglePassword('register-password')">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                
+                <div class="input-field">
+                    <input type="password" id="register-confirm-password" placeholder="Confirm Password" required>
+                    <span class="password-toggle" onclick="togglePassword('register-confirm-password')">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                
+                <button type="submit" class="login-btn">Register</button>
+                
+                <div class="links">
+                    <a href="#" id="switch-to-login">Already have an account?</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Toggle between login and register forms
+        document.getElementById('login-tab').addEventListener('click', function() {
+            document.getElementById('login-tab').classList.add('active');
+            document.getElementById('register-tab').classList.remove('active');
+            document.getElementById('login-form').classList.add('active');
+            document.getElementById('register-form').classList.remove('active');
+            document.getElementById('status-message').innerHTML = '';
+        });
+        
+        document.getElementById('register-tab').addEventListener('click', function() {
+            document.getElementById('register-tab').classList.add('active');
+            document.getElementById('login-tab').classList.remove('active');
+            document.getElementById('register-form').classList.add('active');
+            document.getElementById('login-form').classList.remove('active');
+            document.getElementById('status-message').innerHTML = '';
+        });
+        
+        document.getElementById('switch-to-register').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('register-tab').click();
+        });
+        
+        document.getElementById('switch-to-login').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('login-tab').click();
+        });
+        
+        // Toggle password visibility
+        function togglePassword(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const passwordToggle = passwordInput.nextElementSibling.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordToggle.classList.remove('fa-eye');
+                passwordToggle.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                passwordToggle.classList.remove('fa-eye-slash');
+                passwordToggle.classList.add('fa-eye');
+            }
+        }
+        
+        // Login form submission
+        document.getElementById('login-form-element').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/';
+                } else {
+                    showStatusMessage('error', data.message || 'Login failed. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showStatusMessage('error', 'An error occurred. Please try again.');
+            });
+        });
+        
+        // Register form submission
+        document.getElementById('register-form-element').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                showStatusMessage('error', 'Passwords do not match');
+                return;
+            }
+            
+            fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/';
+                } else {
+                    showStatusMessage('error', data.message || 'Registration failed. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showStatusMessage('error', 'An error occurred. Please try again.');
+            });
+        });
+        
+        // Show status message
+        function showStatusMessage(type, message) {
+            const statusElement = document.getElementById('status-message');
+            statusElement.innerHTML = `
+                <div class="alert alert-${type === 'error' ? 'danger' : 'success'}" role="alert">
+                    ${message}
+                </div>
+            `;
+            
+            // Scroll to message
+            statusElement.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Forgot password functionality
+        document.getElementById('forgot-password').addEventListener('click', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            
+            if (!email) {
+                showStatusMessage('error', 'Please enter your email address first');
+                return;
+            }
+            
+            // Here you would implement your password reset functionality
+            showStatusMessage('success', 'Password reset instructions sent to your email');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,3404 @@
+
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Nyaay Saathi - Indian Legal Guide</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/responsive.css">
+    <!-- PWA Support -->
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#2e3c87">
+    <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico">
+    <style>
+        :root {
+            --primary-color: #000000;   
+            --secondary-color: #800000;   
+            --highlight-color: #FFD700;     
+            --light-color: #1c1c1c;
+            --dark-color: #ffffff;
+        }
+        
+        body {
+            background: linear-gradient(to bottom right, #000000, #330000);
+            color: var(--dark-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .chat-container {
+            max-width: 800px;
+            margin: 30px auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .chat-header {
+            background: linear-gradient(to right, #000000, #800000);
+            color: var(--highlight-color);
+            padding: 15px 20px;
+            border-bottom: 2px solid var(--highlight-color);
+        }
+        
+        .chat-body {
+            height: 450px;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #121212;
+            color: var(--dark-color);
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            position: relative;
+        }
+        
+        .user-message {
+            background-color: var(--highlight-color);
+            color: #000;
+            margin-left: auto;
+        }
+        
+        .bot-message {
+            background-color: #1c1c1c;
+            color: #f8f9fa;
+        }
+
+        .disclaimer {
+            font-size: 0.75rem;
+            font-style: italic;
+            color: #aaa;
+            margin-top: 5px;
+        }
+        
+        .chat-input {
+            padding: 15px;
+            background-color: #1c1c1c;
+            border-top: 1px solid #333;
+        }
+
+        .input-group .form-control::placeholder {
+            color: #ccc;
+        }
+
+        .input-group .btn {
+            border-radius: 0 20px 20px 0;
+            background-color: var(--secondary-color);
+            color: var(--highlight-color);
+            border: none;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .pulse {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--highlight-color);
+            margin: 0 3px;
+            animation: pulse 1.5s infinite;
+        }
+
+        .pulse:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .pulse:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+        }
+
+        .quick-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .question-chip {
+            background-color: #333;
+            color: var(--highlight-color);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .question-chip:hover {
+            background-color: var(--highlight-color);
+            color: #000;
+        }
+
+        .reset-btn {
+            background: none;
+            border: none;
+            color: var(--highlight-color);
+            cursor: pointer;
+        }
+
+        .language-toggle {
+            margin-left: 15px;
+        }
+
+        .language-toggle .dropdown-toggle {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            min-width: 100px;
+            text-align: left;
+            background-color: #222;
+            color: var(--highlight-color);
+            border: 1px solid var(--highlight-color);
+        }
+
+        .language-toggle .dropdown-toggle::after {
+            margin-left: 0.5rem;
+        }
+
+        .language-toggle .dropdown-menu {
+            min-width: 100px;
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: #333;
+            color: var(--highlight-color);
+        }
+
+        .language-toggle .dropdown-item {
+            padding: 0.25rem 1rem;
+            font-size: 0.875rem;
+            color: var(--highlight-color);
+        }
+
+        .language-toggle .dropdown-item:hover {
+            background-color: var(--highlight-color);
+            color: #000;
+        }
+
+        .features-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .feature-btn {
+            background-color: var(--secondary-color);
+            color: var(--highlight-color);
+            border: none;
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .feature-btn:hover {
+            background-color: #660000;
+            color: white;
+        }
+
+        .simplify-toggle {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+            margin-right: 5px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #555;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: var(--highlight-color);
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--secondary-color);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close-btn:hover {
+            color: var(--hover-color);
+        }
+        
+        .timeline-container {
+            margin-top: 20px;
+        }
+        
+        .timeline-item {
+            display: flex;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 26px;
+            height: calc(100% + 20px);
+            width: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .timeline-item:last-child:before {
+            display: none;
+        }
+        
+        .timeline-marker {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+        
+        .timeline-content {
+            margin-left: 15px;
+            padding: 10px 15px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            flex: 1;
+        }
+        
+        .timeline-timeframe {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        .form-container {
+            margin-top: 20px;
+        }
+        
+        .template-selector {
+            margin-bottom: 20px;
+        }
+        
+        .resource-item {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: var(--card-bg);
+        }
+        
+        .resource-distance {
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+        
+        /* Voice input styles */
+        .mic-btn {
+            border-radius: 0;
+            background-color: var(--primary-color);
+            border: none;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .mic-btn.listening {
+            background-color: var(--secondary-color);
+            color: black;
+            animation: pulse-mic 1.5s infinite;
+        }
+
+        @keyframes pulse-mic {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .toast-container {
+            z-index: 9999;
+        }
+        
+        /* Update card styles for analytics modal */
+        #analytics-modal .card {
+            background-color: #000; /* Set background to black */
+            color: #fff; /* Set text color to white for contrast */
+            border: 1px solid #444; /* Optional: Add a subtle border */
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Optional: Add shadow */
+            overflow: hidden;
+        }
+
+        #analytics-modal .card-header {
+            background-color: #111; /* Darker black for header */
+            color: #fff; /* White text for header */
+            font-weight: bold;
+            padding: 10px 15px;
+        }
+
+        #analytics-modal .card-body {
+            padding: 15px;
+        }
+
+        #analytics-btn {
+            transition: all 0.3s;
+        }
+
+        #analytics-btn:hover {
+            transform: scale(1.2);
+        }
+        
+        /* FAQ Modal Styles */
+        #faq-modal .accordion-item {
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        #faq-modal .accordion-button {
+            background-color: #f8f9fa;
+            color: var(--primary-color);
+            font-weight: 600;
+            padding: 15px;
+        }
+
+        #faq-modal .accordion-button:not(.collapsed) {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        #faq-modal .accordion-body {
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        #faq-modal .faq-answer {
+            line-height: 1.6;
+        }
+
+        #faq-search {
+            border-radius: 20px 0 0 20px;
+        }
+
+        #faq-search-btn {
+            border-radius: 0 20px 20px 0;
+            background-color: var(--secondary-color);
+            border: none;
+            color: black;
+        }
+        
+        /* User profile styles */
+        .user-profile {
+            margin-left: 10px;
+        }
+
+        .profile-btn {
+            background-color: rgba(128, 0, 0, 0.2);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 5px 15px;
+            transition: all 0.3s;
+        }
+
+        .profile-btn:hover {
+            background-color: rgba(128, 0, 0, 0.4);
+            color: white;
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            width: 250px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .profile-header {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        #profile-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        #profile-email {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .profile-menu {
+            padding: 10px 0;
+        }
+
+        .profile-menu-item {
+            display: block;
+            padding: 10px 15px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .profile-menu-item:hover {
+            background-color: #f8f9fa;
+            color: var(--primary-color);
+        }
+
+        .history-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .history-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .history-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .history-date {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .history-item-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .history-item-btn {
+            border: none;
+            background: none;
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .history-item-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .save-chat-btn {
+            position: absolute;
+            bottom: 70px;
+            right: 20px;
+            background-color: white;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .save-chat-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+            body {
+                background-color: #121212;
+                color: #e0e0e0;
+            }
+            
+            .chat-body, .chat-input {
+                background-color: #1e1e1e;
+                color: #e0e0e0;
+            }
+            
+            .bot-message {
+                background-color: #2a2a2a;
+                color: #e0e0e0;
+            }
+            
+            .question-chip {
+                background-color: #2a2a2a;
+                color: #e0e0e0;
+            }
+            
+            .input-group .form-control {
+                background-color: #2a2a2a;
+                color: #e0e0e0;
+                border-color: #444;
+            }
+            
+            .modal-content {
+                background-color: #1e1e1e;
+                color: #e0e0e0;
+            }
+            
+            .timeline-content, .resource-item {
+                background-color: #2a2a2a;
+                border-color: #444;
+    }
+            
+            .language-toggle .dropdown-toggle {
+                background-color: #2a2a2a;
+                color: #e0e0e0;
+                border-color: #444;
+            }
+            
+            #faq-modal .accordion-button {
+                background-color: #2a2a2a;
+                color: #e0e0e0;
+            }
+            
+            #faq-modal .accordion-button:not(.collapsed) {
+                background-color: var(--primary-color);
+                color: white;
+            }
+            
+            #faq-modal .accordion-body {
+                background-color: #2a2a2a;
+                color: #e0e0e0;
+            }
+            
+            /* Dark mode for profile dropdown */
+            .profile-dropdown {
+                background-color: #1e1e1e;
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+            }
+            
+            .profile-header {
+                border-bottom-color: #444;
+            }
+            
+            #profile-email {
+                color: #adb5bd;
+            }
+            
+            .profile-menu-item {
+                color: #e0e0e0;
+            }
+            
+            .profile-menu-item:hover {
+                background-color: #2a2a2a;
+                color: var(--secondary-color);
+            }
+            
+            .history-item {
+                border-bottom-color: #444;
+            }
+            
+            .history-item:hover {
+                background-color: #2a2a2a;
+            }
+            
+            .history-date {
+                color: #adb5bd;
+            }
+            
+            .save-chat-btn {
+                background-color: #2a2a2a;
+                color: #d09c4a;
+                border-color: #d09c4a;
+            }
+            
+            .save-chat-btn:hover {
+                background-color: #d09c4a;
+                color: #2a2a2a;
+            }
+            .upload-container {
+                border-color: #444;
+                background-color: #2a2a2a;
+            }
+
+        }
+        .document-upload-button {
+            margin-left: 10px;
+        }
+        .upload-container {
+             border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        #document-upload-form .form-control {
+            margin-bottom: 15px;
+        }
+        
+        #document-analysis-result {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        #document-key-points li {
+            margin-bottom: 8px;
+        }
+        
+       @media (prefers-color-scheme: dark) {
+            .modal-content {
+                background: linear-gradient(135deg, #4d0000 0%, #111 60%, #d4af37 100%);
+                color: #f0f0f0;
+                border-color: #d4af37;
+            }
+            
+            #document-analysis-result .card {
+                background-color: #2a2a2a;
+                border-color: #444;
+            }
+            
+            #document-analysis-result .card-header {
+                background-color: #3a3a3a !important;
+            }
+        }
+        /* Improve modal scrolling */
+        .modal-content {
+            max-height: 80vh; /* Limit to 80% of viewport height */
+            overflow-y: auto; /* Enable vertical scrolling */
+            padding-bottom: 30px; /* Add padding at bottom for better UX */
+        }
+
+        /* Make sure the document analysis results are fully visible */
+        #document-analysis-result {
+            max-height: none; /* Remove any height restriction */
+            overflow: visible; /* Ensure content isn't cut off */
+        }
+
+        /* Allow key points list to expand fully */
+        #document-key-points {
+            max-height: none;
+            overflow: visible;
+            margin-bottom: 20px;
+        }
+
+        /* Ensure card body can expand */
+        #document-analysis-result .card {
+            background: linear-gradient(135deg, #800000 0%, #000000 70%, #FFD700 100%);
+            border: 1px solid #800000;
+            color: #fff;
+            border-radius: 10px;
+        }
+
+        /* Card header styling */
+        #document-analysis-result .card-header {
+            background-color: #990000 !important;
+            color: #FFD700;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Modal scrolling and layout */
+        .modal-content {
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 20px 30px 30px;
+            background: linear-gradient(135deg, #800000 0%, #000000 70%, #FFD700 100%);
+            color: #fff;
+            border-radius: 15px;
+            border: 1px solid #800000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Ensure document analysis section is fully visible */
+        #document-analysis-result {
+            max-height: none;
+            overflow: visible;
+        }
+
+        /* Expand key points list */
+        #document-key-points {
+            max-height: none;
+            overflow: visible;
+            margin-bottom: 20px;
+        }
+
+        /* Expand card body */
+        #document-analysis-result .card-body {
+            max-height: none;
+            overflow: visible;
+        }
+
+        /* Message formatting */
+        .message p {
+            margin-bottom: 12px;
+        }
+
+        .message p:last-of-type {
+            margin-bottom: 0;
+        }
+
+        /* Optional: List styling inside messages */
+        .message ul, .message ol {
+            padding-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        .message li {
+            margin-bottom: 5px;
+        }
+
+        /* Code block formatting */
+        .message pre {
+            white-space: pre-wrap;
+            background-color: rgba(255, 215, 0, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: auto;
+            color: #FFD700;
+        }
+
+        /* Strong text formatting */
+        .message strong {
+            font-weight: 600;
+            color: #FFD700;
+        }
+
+        /* Ordered list style */
+        .message ol {
+            list-style-type: decimal;
+        }
+
+        /* Dark mode (if supported) */
+        @media (prefers-color-scheme: dark) {
+            #document-analysis-result .card {
+                background: linear-gradient(135deg, #4d0000 0%, #111 70%, #d4af37 100%);
+                border-color: #d4af37;
+            }
+
+            #document-analysis-result .card-header {
+                background-color: #660000 !important;
+                color: #d4af37;
+            }
+
+            .modal-content {
+                background: linear-gradient(135deg, #4d0000 0%, #111 70%, #d4af37 100%);
+                color: #f0f0f0;
+                border-color: #d4af37;
+            }
+
+            .message pre {
+                background-color: rgba(212, 175, 55, 0.1);
+                color: #d4af37;
+            }
+
+            .message strong {
+                color: #d4af37;
+            }
+        }
+
+        /* Improve numbered list display */
+        .message ol {
+            list-style-type: decimal;
+            color: #FFD700; /* Gold text for list items */
+        }
+
+        /* Speech button styles */
+        .speak-btn {
+            padding: 2px 6px !important;
+            font-size: 0.8rem !important;
+            border-radius: 50% !important;
+            width: 28px;
+            height: 28px;
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+            transition: all 0.2s;
+            vertical-align: middle;
+            background: linear-gradient(135deg, #800000, #000000);
+            color: #FFD700;
+            border: 1px solid #FFD700;
+            box-shadow: 0 2px 6px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Hover effect for speech button */
+        .speak-btn:hover {
+            background: #FFD700 !important;
+            color: #800000 !important;
+        }
+
+        /* Speaking animation */
+        .speak-btn.speaking {
+            background-color: #FFD700 !important;
+            color: #800000 !important;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Pulse animation keyframes */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7);
+            }
+            70% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 10px rgba(255, 215, 0, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+            }
+        }
+        /* Improved message formatting */
+        .message p {
+            margin-bottom: 12px;
+        }
+
+        .message p:last-of-type {
+            margin-bottom: 0;
+        }
+
+        /* Add spacing between list items in messages */
+        .message ul, .message ol {
+            padding-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        .message li {
+            margin-bottom: 5px;
+        }
+
+        /* Bot message specific formatting */
+        .bot-message p {
+            white-space: pre-line; /* This preserves line breaks */
+            margin-bottom: 10px;
+        }
+
+        .bot-message ul, .bot-message ol {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        .bot-message li {
+            margin-bottom: 5px;
+        }
+
+        /* Preserve whitespace in pre-formatted blocks */
+        .message pre {
+            white-space: pre-wrap;
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: auto;
+        }
+
+        /* Style the bold text for better readability */
+        .message strong {
+            font-weight: 600;
+        }
+
+        /* Improve numbered list display */
+        .message ol {
+            list-style-type: decimal;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chat-container">
+            <div class="chat-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="mb-0">Nyaay Saathi</h3>
+                    <small>Your Indian Legal Guide</small>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="simplify-toggle">
+                        <label class="switch">
+                            <input type="checkbox" id="simplify-toggle">
+                            <span class="slider"></span>
+                        </label>
+                        <small>Simplify</small>
+                    </div>
+                    <div class="language-toggle dropdown">
+                        <button class="btn btn-sm dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span id="language-badge">English</span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                            <li><a class="dropdown-item" href="#" data-lang="English">English</a></li>
+                            <li><a class="dropdown-item" href="#" data-lang="Hinglish">Hinglish</a></li>
+                            <li><a class="dropdown-item" href="#" data-lang="Hindi">Hindi</a></li>
+                            <li><a class="dropdown-item" href="#" data-lang="Bengali">Bengali</a></li>
+                            <li><a class="dropdown-item" href="#" data-lang="Tamil">Tamil</a></li>
+                            <li><a class="dropdown-item" href="#" data-lang="Telugu">Telugu</a></li>
+                            <li><a class="dropdown-item" href="#" data-lang="Marathi">Marathi</a></li>
+                            <li><a class="dropdown-item" href="#" data-lang="Gujarati">Gujarati</a></li>
+                            <li><a class="dropdown-item" href="#" data-lang="Kannada">Kannada</a></li>
+                        </ul>
+                    </div>
+                    <div class="user-profile">
+                        <button class="btn btn-sm profile-btn" id="profile-btn">
+                            <i class="fas fa-user"></i> <span id="user-name">User</span>
+                        </button>
+                    </div>
+                    <button class="reset-btn ms-3" id="reset-chat">
+                        <i class="fas fa-redo-alt"></i>
+                    </button>
+                    <button class="reset-btn ms-3" id="analytics-btn">
+                        <i class="fas fa-chart-line"></i>
+                    </button>
+                </div>
+                        <div class="document-upload-button">
+            <button class="feature-btn" id="document-upload-btn">
+                <i class="fas fa-file-upload"></i> Upload Document
+            </button>
+        </div>
+            </div>
+            
+            <div class="features-row px-3 pt-2 pb-1 bg-light">
+                <button class="feature-btn" id="document-btn">
+                    <i class="fas fa-file-alt"></i> Legal Documents
+                </button>
+                <button class="feature-btn" id="timeline-btn">
+                    <i class="fas fa-stream"></i> Legal Timelines
+                </button>
+                <button class="feature-btn" id="resources-btn">
+                    <i class="fas fa-map-marker-alt"></i> Nearby Resources
+                </button>
+                <button class="feature-btn" id="faq-btn">
+                    <i class="fas fa-question-circle"></i> Legal FAQs
+                </button>
+            </div>
+            
+            <div class="chat-body" id="chat-body">
+                <div class="message bot-message">
+                    <p>Namaste! I'm Nyaay Saathi, your AI Legal Assistant for Indian law. How can I help you today?</p>
+                    <p class="disclaimer">I am an AI assistant and not a licensed legal advisor. Please consult a lawyer for serious or urgent matters.</p>
+                </div>
+                
+                <div class="quick-questions">
+                    <div class="question-chip">How to file an FIR?</div>
+                    <div class="question-chip">Rights during arrest</div>
+                    <div class="question-chip">Consumer complaint process</div>
+                    <div class="question-chip">RTI application procedure</div>
+                </div>
+                
+                <div class="loader">
+                    <div class="pulse"></div>
+                    <div class="pulse"></div>
+                    <div class="pulse"></div>
+                </div>
+            </div>
+            
+            <div class="chat-input">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="user-input" placeholder="Ask a legal question...">
+                    <button class="btn btn-primary" id="send-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Document Template Modal -->
+    <div id="document-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-document-modal">&times;</span>
+            <h3>Legal Document Generator</h3>
+            <p>Select a document template and fill in the details to generate a legal document.</p>
+            
+            <div class="template-selector">
+                <label for="template-select">Select Template:</label>
+                <select id="template-select" class="form-select">
+                    <option value="">-- Select a template --</option>
+                    <option value="police_complaint">Police Complaint</option>
+                    <option value="rti_application">RTI Application</option>
+                    <option value="consumer_complaint">Consumer Complaint</option>
+                    <option value="rent_agreement">Rent Agreement</option>
+                </select>
+            </div>
+            
+            <div id="template-form-container" class="form-container">
+                <!-- Form fields will be dynamically generated based on selected template -->
+            </div>
+            
+            <div id="generated-document" class="mt-4 p-3 border rounded bg-light" style="display: none;">
+                <h4 id="document-title"></h4>
+                <pre id="document-content" class="p-3 bg-white border rounded"></pre>
+                <div class="mt-2">
+                    <button id="copy-document" class="btn btn-primary me-2">
+                        <i class="fas fa-copy"></i> Copy to Clipboard
+                    </button>
+                    <button id="download-pdf-document" class="btn btn-success">
+                        <i class="fas fa-file-pdf"></i> Download as PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Timeline Modal -->
+    <div id="timeline-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-timeline-modal">&times;</span>
+            <h3>Legal Process Timelines</h3>
+            <p>Understanding the legal process timeline can help you navigate the system better.</p>
+            
+            <div class="template-selector">
+                <label for="timeline-select">Select Process:</label>
+                <select id="timeline-select" class="form-select">
+                    <option value="">-- Select a process --</option>
+                    <option value="fir_to_chargesheet">FIR to Chargesheet Process</option>
+                    <option value="consumer_complaint_process">Consumer Complaint Process</option>
+                    <option value="civil_case_procedure">Civil Case Procedure</option>
+                </select>
+            </div>
+            
+            <div id="timeline-container" class="timeline-container">
+                <!-- Timeline items will be dynamically generated -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Nearby Resources Modal -->
+    <div id="resources-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-resources-modal">&times;</span>
+            <h3>Nearby Legal Resources</h3>
+            <p>Find legal resources near your location.</p>
+            
+            <div class="template-selector">
+                <label for="resource-type-select">Resource Type:</label>
+                <select id="resource-type-select" class="form-select">
+                    <option value="police_station">Police Stations</option>
+                    <option value="consumer_court">Consumer Courts</option>
+                    <option value="legal_aid">Legal Aid Centers</option>
+                </select>
+            </div>
+            
+            <button id="get-location-btn" class="btn btn-primary mt-2 mb-3">
+                <i class="fas fa-location-arrow"></i> Use My Location
+            </button>
+            
+            <div id="resources-container">
+                <!-- Resource items will be dynamically generated -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- FAQ Modal -->
+    <div id="faq-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-faq-modal">&times;</span>
+            <h3>Frequently Asked Legal Questions</h3>
+            <p>Common legal questions and their answers</p>
+            
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" id="faq-search" placeholder="Search FAQs...">
+                <button class="btn btn-primary" id="faq-search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <div class="accordion" id="faqAccordion">
+                <!-- FAQs will be loaded here -->
+                <div class="text-center p-3">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading FAQs...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Analytics Modal -->
+    <div id="analytics-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <span class="close-btn" id="close-analytics-modal">&times;</span>
+            <h3>Nyaay Saathi Analytics Dashboard</h3>
+            <p>Real-time analytics for your hackathon demo</p>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">Usage Statistics</div>
+                        <div class="card-body">
+                            <p>Active Session: <span id="analytics-session-time">0 minutes</span></p>
+                            <p>Total Conversations: <span id="analytics-conversations">0</span></p>
+                            <p>Messages Exchanged: <span id="analytics-messages">0</span></p>
+                            <p>Avg. Response Time: <span id="analytics-response-time">0 sec</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">Features Usage</div>
+                        <div class="card-body">
+                            <div id="features-chart" style="height: 200px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">Top Question Categories</div>
+                        <div class="card-body">
+                            <div id="questions-chart" style="height: 200px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">Language Usage</div>
+                        <div class="card-body">
+                            <div id="language-chart" style="height: 200px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-end mt-3">
+                <button id="reset-analytics-btn" class="btn btn-secondary me-2">Reset Analytics</button>
+                <button id="download-analytics-btn" class="btn btn-primary">Download Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User profile dropdown -->
+    <div class="profile-dropdown" id="profile-dropdown">
+        <div class="profile-header">
+            <div id="profile-name">User Name</div>
+            <div id="profile-email">user@example.com</div>
+        </div>
+        <div class="profile-menu">
+            <a href="#" id="chat-history-btn" class="profile-menu-item">
+                <i class="fas fa-history"></i> Chat History
+            </a>
+            <a href="#" id="logout-btn" class="profile-menu-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Chat History Modal -->
+    <div id="history-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-history-modal">&times;</span>
+            <h3>Your Chat History</h3>
+            <p>Previous conversations with Nyaay Saathi</p>
+            
+            <div id="history-list" class="history-list">
+                <div class="text-center p-3">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading chat history...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Analytics implementation for hackathon demo
+        const analytics = {
+            sessionStartTime: new Date(),
+            conversations: 0,
+            messagesExchanged: 0,
+            userMessages: 0,
+            botMessages: 0,
+            topQuestionsCategories: {},
+            featuresUsed: {
+                documents: 0,
+                timelines: 0,
+                resources: 0,
+                simplify: 0,
+                voice: 0,
+                multilingual: 0,
+                faq: 0
+            },
+            languageUsage: {
+                English: 0,
+                Hinglish: 0,
+                Hindi: 0,
+                Bengali: 0,
+                Tamil: 0,
+                Telugu: 0,
+                Marathi: 0,
+                Gujarati: 0
+            },
+            responseTimeAvg: 0,
+            totalResponseTime: 0,
+            activeUsers: 1
+        };
+
+        let currentMessageStartTime = null;
+
+        // Update analytics function
+        function updateAnalytics(action, data) {
+            switch(action) {
+                case 'new_conversation':
+                    analytics.conversations++;
+                    break;
+                    
+                case 'message_sent':
+                    analytics.messagesExchanged++;
+                    analytics.userMessages++;
+                    currentMessageStartTime = new Date();
+                    
+                    // Track question categories
+                    const message = data.toLowerCase();
+                    if (message.includes('fir') || message.includes('police') || message.includes('complaint')) {
+                        analytics.topQuestionsCategories['Police Complaint/FIR'] = (analytics.topQuestionsCategories['Police Complaint/FIR'] || 0) + 1;
+                    } else if (message.includes('arrest') || message.includes('bail') || message.includes('custody')) {
+                        analytics.topQuestionsCategories['Arrest Rights'] = (analytics.topQuestionsCategories['Arrest Rights'] || 0) + 1;
+                    } else if (message.includes('consumer') || message.includes('product') || message.includes('refund')) {
+                        analytics.topQuestionsCategories['Consumer Rights'] = (analytics.topQuestionsCategories['Consumer Rights'] || 0) + 1;
+                    } else if (message.includes('rti') || message.includes('information') || message.includes('right to information')) {
+                        analytics.topQuestionsCategories['RTI'] = (analytics.topQuestionsCategories['RTI'] || 0) + 1;
+                    } else if (message.includes('tenant') || message.includes('landlord') || message.includes('rent')) {
+                        analytics.topQuestionsCategories['Tenant Rights'] = (analytics.topQuestionsCategories['Tenant Rights'] || 0) + 1;
+                    } else if (message.includes('marriage') || message.includes('divorce') || message.includes('custody')) {
+                        analytics.topQuestionsCategories['Family Law'] = (analytics.topQuestionsCategories['Family Law'] || 0) + 1;
+                    } else {
+                        analytics.topQuestionsCategories['Other'] = (analytics.topQuestionsCategories['Other'] || 0) + 1;
+                    }
+                    break;
+                    
+                case 'message_received':
+                    analytics.botMessages++;
+                    
+                    // Calculate response time
+                    if (currentMessageStartTime) {
+                        const responseTime = (new Date() - currentMessageStartTime) / 1000; // in seconds
+                        analytics.totalResponseTime += responseTime;
+                        analytics.responseTimeAvg = analytics.totalResponseTime / analytics.botMessages;
+                        currentMessageStartTime = null;
+                    }
+                    break;
+                    
+                case 'feature_used':
+                    analytics.featuresUsed[data]++;
+                    break;
+                    
+                case 'language_changed':
+                    analytics.languageUsage[data]++;
+                    break;
+            }
+            
+            // Update localStorage
+            localStorage.setItem('nyaaysaathi_analytics', JSON.stringify(analytics));
+            
+            // Update analytics dashboard if open
+            updateAnalyticsDashboard();
+        }
+
+        // Initialize analytics
+        function initAnalytics() {
+            // Check if we have existing analytics in localStorage
+            const savedAnalytics = localStorage.getItem('nyaaysaathi_analytics');
+            if (savedAnalytics) {
+                try {
+                    const parsedAnalytics = JSON.parse(savedAnalytics);
+                    // Keep session start time and active users as current
+                    parsedAnalytics.sessionStartTime = new Date();
+                    parsedAnalytics.activeUsers = 1;
+                    Object.assign(analytics, parsedAnalytics);
+                } catch (error) {
+                    console.error('Error parsing saved analytics:', error);
+                }
+            } else {
+                // New session
+                analytics.conversations = 1; // Start with 1 for the initial conversation
+                updateAnalytics('new_conversation');
+            }
+        }
+
+        // Update analytics dashboard with current data
+        function updateAnalyticsDashboard() {
+            const modal = document.getElementById('analytics-modal');
+            if (modal && modal.style.display === 'block') {
+                // Update session time
+                const sessionTime = Math.round((new Date() - new Date(analytics.sessionStartTime)) / 60000); // in minutes
+                document.getElementById('analytics-session-time').textContent = sessionTime + ' minutes';
+                
+                // Update basic stats
+                document.getElementById('analytics-conversations').textContent = analytics.conversations;
+                document.getElementById('analytics-messages').textContent = analytics.messagesExchanged;
+                document.getElementById('analytics-response-time').textContent = analytics.responseTimeAvg.toFixed(2) + ' sec';
+                
+                // Update charts
+                updateFeaturesChart();
+                updateQuestionsChart();
+                updateLanguageChart();
+            }
+        }
+
+        // Create and update features chart
+        function updateFeaturesChart() {
+            const features = Object.keys(analytics.featuresUsed);
+            const data = features.map(feature => analytics.featuresUsed[feature]);
+            
+            const chartCanvas = document.getElementById('features-chart');
+            if (!chartCanvas) return;
+            
+            // Clear existing chart
+            while (chartCanvas.firstChild) {
+                chartCanvas.removeChild(chartCanvas.firstChild);
+            }
+            
+            // Create simple bar chart using div elements
+            features.forEach((feature, index) => {
+                const count = analytics.featuresUsed[feature];
+                if (count === 0) return;
+                
+                const barContainer = document.createElement('div');
+                barContainer.style.display = 'flex';
+                barContainer.style.alignItems = 'center';
+                barContainer.style.marginBottom = '8px';
+                
+                const label = document.createElement('div');
+                label.style.width = '100px';
+                label.style.flexShrink = 0;
+                label.textContent = feature.charAt(0).toUpperCase() + feature.slice(1);
+                
+                const barWrapper = document.createElement('div');
+                barWrapper.style.flex = '1';
+                barWrapper.style.marginLeft = '10px';
+                
+                const barBackground = document.createElement('div');
+                barBackground.style.backgroundColor = '#e9ecef';
+                barBackground.style.height = '20px';
+                barBackground.style.borderRadius = '4px';
+                barBackground.style.width = '100%';
+                
+                const maxCount = Math.max(...data);
+                const barWidth = Math.max(5, (count / maxCount) * 100);
+                
+                const bar = document.createElement('div');
+                bar.style.backgroundColor = '#2e3c87';
+                bar.style.height = '20px';
+                bar.style.borderRadius = '4px';
+                bar.style.width = barWidth + '%';
+                
+                const countLabel = document.createElement('span');
+                countLabel.style.marginLeft = '10px';
+                countLabel.textContent = count;
+                
+                barBackground.appendChild(bar);
+                barWrapper.appendChild(barBackground);
+                
+                barContainer.appendChild(label);
+                barContainer.appendChild(barWrapper);
+                barContainer.appendChild(countLabel);
+                
+                chartCanvas.appendChild(barContainer);
+            });
+            
+            // Display message if no data
+            if (chartCanvas.childNodes.length === 0) {
+                const noDataMessage = document.createElement('p');
+                noDataMessage.textContent = 'No feature usage data yet';
+                noDataMessage.style.textAlign = 'center';
+                noDataMessage.style.color = '#6c757d';
+                chartCanvas.appendChild(noDataMessage);
+            }
+        }
+
+        // Create and update questions chart
+        function updateQuestionsChart() {
+            const categories = Object.keys(analytics.topQuestionsCategories);
+            const data = categories.map(category => analytics.topQuestionsCategories[category]);
+            
+            const chartCanvas = document.getElementById('questions-chart');
+            if (!chartCanvas) return;
+            
+            // Clear existing chart
+            while (chartCanvas.firstChild) {
+                chartCanvas.removeChild(chartCanvas.firstChild);
+            }
+            
+            // Create simple bar chart using div elements
+            categories.forEach((category, index) => {
+                const count = analytics.topQuestionsCategories[category];
+                if (count === 0) return;
+                
+                const barContainer = document.createElement('div');
+                barContainer.style.display = 'flex';
+                barContainer.style.alignItems = 'center';
+                barContainer.style.marginBottom = '8px';
+                
+                const label = document.createElement('div');
+                label.style.width = '120px';
+                label.style.flexShrink = 0;
+                label.textContent = category;
+                
+                const barWrapper = document.createElement('div');
+                barWrapper.style.flex = '1';
+                barWrapper.style.marginLeft = '10px';
+                
+                const barBackground = document.createElement('div');
+                barBackground.style.backgroundColor = '#e9ecef';
+                barBackground.style.height = '20px';
+                barBackground.style.borderRadius = '4px';
+                barBackground.style.width = '100%';
+                
+                const maxCount = Math.max(...data);
+                const barWidth = Math.max(5, (count / maxCount) * 100);
+                
+                const bar = document.createElement('div');
+                bar.style.backgroundColor = '#d09c4a';
+                bar.style.height = '20px';
+                bar.style.borderRadius = '4px';
+                bar.style.width = barWidth + '%';
+                
+                const countLabel = document.createElement('span');
+                countLabel.style.marginLeft = '10px';
+                countLabel.textContent = count;
+                
+                barBackground.appendChild(bar);
+                barWrapper.appendChild(barBackground);
+                
+                barContainer.appendChild(label);
+                barContainer.appendChild(barWrapper);
+                barContainer.appendChild(countLabel);
+                
+                chartCanvas.appendChild(barContainer);
+            });
+            
+            // Display message if no data
+            if (chartCanvas.childNodes.length === 0) {
+                const noDataMessage = document.createElement('p');
+                noDataMessage.textContent = 'No question category data yet';
+                noDataMessage.style.textAlign = 'center';
+                noDataMessage.style.color = '#6c757d';
+                chartCanvas.appendChild(noDataMessage);
+            }
+        }
+
+        // Create and update language chart
+        function updateLanguageChart() {
+            const languages = Object.keys(analytics.languageUsage);
+            const data = languages.map(language => analytics.languageUsage[language]);
+            
+            const chartCanvas = document.getElementById('language-chart');
+            if (!chartCanvas) return;
+            
+            // Clear existing chart
+            while (chartCanvas.firstChild) {
+                chartCanvas.removeChild(chartCanvas.firstChild);
+            }
+            
+            // Create simple bar chart using div elements
+            languages.forEach((language, index) => {
+                const count = analytics.languageUsage[language];
+                if (count === 0) return;
+                
+                const barContainer = document.createElement('div');
+                barContainer.style.display = 'flex';
+                barContainer.style.alignItems = 'center';
+                barContainer.style.marginBottom = '8px';
+                
+                const label = document.createElement('div');
+                label.style.width = '100px';
+                label.style.flexShrink = 0;
+                label.textContent = language;
+                
+                const barWrapper = document.createElement('div');
+                barWrapper.style.flex = '1';
+                barWrapper.style.marginLeft = '10px';
+                
+                const barBackground = document.createElement('div');
+                barBackground.style.backgroundColor = '#e9ecef';
+                barBackground.style.height = '20px';
+                barBackground.style.borderRadius = '4px';
+                barBackground.style.width = '100%';
+                
+                const maxCount = Math.max(...data);
+                const barWidth = Math.max(5, (count / maxCount) * 100);
+                
+                const bar = document.createElement('div');
+                bar.style.backgroundColor = '#28a745';
+                bar.style.height = '20px';
+                bar.style.borderRadius = '4px';
+                bar.style.width = barWidth + '%';
+                
+                const countLabel = document.createElement('span');
+                countLabel.style.marginLeft = '10px';
+                countLabel.textContent = count;
+                
+                barBackground.appendChild(bar);
+                barWrapper.appendChild(barBackground);
+                
+                barContainer.appendChild(label);
+                barContainer.appendChild(barWrapper);
+                barContainer.appendChild(countLabel);
+                
+                chartCanvas.appendChild(barContainer);
+            });
+            
+            // Display message if no data
+            if (chartCanvas.childNodes.length === 0) {
+                const noDataMessage = document.createElement('p');
+                noDataMessage.textContent = 'No language usage data yet';
+                noDataMessage.style.textAlign = 'center';
+                noDataMessage.style.color = '#6c757d';
+                chartCanvas.appendChild(noDataMessage);
+            }
+        }
+        // Download analytics report as CSV
+        function downloadAnalyticsReport() {
+            // Create CSV content
+            let csvContent = "data:text/csv;charset=utf-8,";
+            
+            // Basic stats
+            csvContent += "Nyaay Saathi Analytics Report\n";
+            csvContent += "Generated at," + new Date().toLocaleString() + "\n\n";
+            
+            csvContent += "Basic Statistics\n";
+            csvContent += "Session Duration (minutes)," + Math.round((new Date() - new Date(analytics.sessionStartTime)) / 60000) + "\n";
+            csvContent += "Total Conversations," + analytics.conversations + "\n";
+            csvContent += "Messages Exchanged," + analytics.messagesExchanged + "\n";
+            csvContent += "User Messages," + analytics.userMessages + "\n";
+            csvContent += "Bot Messages," + analytics.botMessages + "\n";
+            csvContent += "Average Response Time (seconds)," + analytics.responseTimeAvg.toFixed(2) + "\n\n";
+            
+            // Features usage
+            csvContent += "Features Usage\n";
+            csvContent += "Feature,Count\n";
+            Object.entries(analytics.featuresUsed).forEach(([feature, count]) => {
+                csvContent += feature + "," + count + "\n";
+            });
+            csvContent += "\n";
+            
+            // Question categories
+            csvContent += "Question Categories\n";
+            csvContent += "Category,Count\n";
+            Object.entries(analytics.topQuestionsCategories).forEach(([category, count]) => {
+                csvContent += category + "," + count + "\n";
+            });
+            csvContent += "\n";
+            
+            // Language usage
+            csvContent += "Language Usage\n";
+            csvContent += "Language,Count\n";
+            Object.entries(analytics.languageUsage).forEach(([language, count]) => {
+                csvContent += language + "," + count + "\n";
+            });
+            
+            // Create download link
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "nyaay_saathi_analytics_" + new Date().toISOString().slice(0, 10) + ".csv");
+            document.body.appendChild(link);
+            
+            // Trigger download
+            link.click();
+            
+            // Clean up
+            document.body.removeChild(link);
+        }
+
+        // User authentication integration
+        let currentUser = null;
+        let allMessages = [];
+
+        // Fetch current user info
+        function getCurrentUser() {
+            fetch('/api/user')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logged_in) {
+                        currentUser = data;
+                        updateUserInterface();
+                    } else {
+                        // Redirect to login if not logged in
+                        window.location.href = '/login';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching user info:', error);
+                    // Redirect to login on error
+                    window.location.href = '/login';
+                });
+        }
+
+        // Update user interface with logged in user info
+        function updateUserInterface() {
+            document.getElementById('user-name').textContent = currentUser.name.split(' ')[0];
+            document.getElementById('profile-name').textContent = currentUser.name;
+            document.getElementById('profile-email').textContent = currentUser.email;
+            
+            // Show save chat button
+            if (!document.querySelector('.save-chat-btn')) {
+                const saveChatBtn = document.createElement('button');
+                saveChatBtn.className = 'save-chat-btn';
+                saveChatBtn.id = 'save-chat-btn';
+                saveChatBtn.title = 'Save this conversation';
+                saveChatBtn.innerHTML = '<i class="fas fa-save"></i>';
+                saveChatBtn.addEventListener('click', saveCurrentChat);
+                document.querySelector('.chat-container').appendChild(saveChatBtn);
+            }
+        }
+
+        // Toggle profile dropdown
+        document.getElementById('profile-btn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById('profile-dropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#profile-dropdown') && !e.target.closest('#profile-btn')) {
+                document.getElementById('profile-dropdown').style.display = 'none';
+            }
+        });
+
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            fetch('/api/logout', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/login';
+                }
+            })
+            .catch(error => {
+                console.error('Error logging out:', error);
+            });
+        });
+
+        // Save current chat
+        function saveCurrentChat() {
+            if (allMessages.length === 0) {
+                showToast('No messages to save');
+                return;
+            }
+            
+            fetch('/api/save_chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    messages: allMessages
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Chat saved successfully');
+                } else {
+                    showToast('Failed to save chat');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving chat:', error);
+                showToast('Error saving chat');
+            });
+        }
+
+        // Chat history functionality
+        document.getElementById('chat-history-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('profile-dropdown').style.display = 'none';
+            
+            // Show history modal
+            document.getElementById('history-modal').style.display = 'block';
+            
+            // Load chat history
+            loadChatHistory();
+        });
+
+        // Close history modal
+        document.getElementById('close-history-modal').addEventListener('click', function() {
+            document.getElementById('history-modal').style.display = 'none';
+        });
+
+        // Load chat history
+        function loadChatHistory() {
+            fetch('/api/chat_history')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayChatHistory(data.chats);
+                    } else {
+                        document.getElementById('history-list').innerHTML = `
+                            <div class="alert alert-danger" role="alert">
+                                Failed to load chat history.
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading chat history:', error);
+                    document.getElementById('history-list').innerHTML = `
+                        <div class="alert alert-danger" role="alert">
+                            Error loading chat history.
+                        </div>
+                    `;
+                });
+        }
+        // Display chat history
+        function displayChatHistory(chats) {
+            const historyList = document.getElementById('history-list');
+            
+            if (chats.length === 0) {
+                historyList.innerHTML = `
+                    <div class="text-center p-4">
+                        <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                        <p>No chat history found</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            historyList.innerHTML = '';
+            
+            // Sort chats by timestamp (newest first)
+            chats.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            chats.forEach(chat => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                
+                const timestamp = new Date(chat.timestamp);
+                const formattedDate = timestamp.toLocaleDateString() + ' ' + timestamp.toLocaleTimeString();
+                
+                historyItem.innerHTML = `
+                    <div class="history-title">${chat.title}</div>
+                    <div class="history-date">${formattedDate}</div>
+                    <div class="history-item-controls">
+                        <button class="history-item-btn load-chat-btn" data-chat-id="${chat.id}">
+                            <i class="fas fa-folder-open"></i> Open
+                        </button>
+                        <button class="history-item-btn delete-chat-btn" data-chat-id="${chat.id}">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </button>
+                    </div>
+                `;
+                
+                historyList.appendChild(historyItem);
+            });
+            
+            // Add event listeners to buttons
+            document.querySelectorAll('.load-chat-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const chatId = this.getAttribute('data-chat-id');
+                    loadChat(chatId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-chat-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const chatId = this.getAttribute('data-chat-id');
+                    if (confirm('Are you sure you want to delete this chat?')) {
+                        deleteChat(chatId);
+                    }
+                });
+            });
+        }
+
+        // Load specific chat
+        function loadChat(chatId) {
+            fetch(`/api/chat/${chatId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Close modal
+                        document.getElementById('history-modal').style.display = 'none';
+                        
+                        // Clear current chat
+                        const chatBody = document.getElementById('chat-body');
+                        chatBody.innerHTML = '';
+                        
+                        // Add welcome message
+                        const welcomeMessage = document.createElement('div');
+                        welcomeMessage.className = 'message bot-message';
+                        welcomeMessage.innerHTML = `
+                            <p>Namaste! I'm Nyaay Saathi, your AI Legal Assistant for Indian law. How can I help you today?</p>
+                            <p class="disclaimer">I am an AI assistant and not a licensed legal advisor. Please consult a lawyer for serious or urgent matters.</p>
+                        `;
+                        chatBody.appendChild(welcomeMessage);
+                        
+                        // Reset conversation history
+                        fetch('/api/reset', { method: 'POST' })
+                            .then(() => {
+                                // Add messages from history
+                                allMessages = data.chat.messages;
+                                
+                                data.chat.messages.forEach(msg => {
+                                    addMessageToChat(msg.content, msg.role === 'user' ? 'user' : 'bot');
+                                });
+                                
+                                // Scroll to bottom
+                                chatBody.scrollTop = chatBody.scrollHeight;
+                            });
+                    } else {
+                        showToast('Failed to load chat');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading chat:', error);
+                    showToast('Error loading chat');
+                });
+        }
+
+        // Delete chat
+        function deleteChat(chatId) {
+            fetch(`/api/chat/${chatId}`, {
+                method: 'DELETE'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadChatHistory(); // Refresh the list
+                        showToast('Chat deleted successfully');
+                    } else {
+                        showToast('Failed to delete chat');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting chat:', error);
+                    showToast('Error deleting chat');
+                });
+        }
+
+        // Hook analytics into UI events
+        function hookAnalyticsEvents() {
+            // Track message sent
+            const originalSendMessage = window.sendMessage;
+            window.sendMessage = function() {
+                const message = document.getElementById('user-input').value.trim();
+                if (message) {
+                    updateAnalytics('message_sent', message);
+                }
+                originalSendMessage.apply(this, arguments);
+            };
+            
+            // Track bot responses
+            const originalAddMessageToChat = window.addMessageToChat;
+            window.addMessageToChat = function(message, sender) {
+                if (sender === 'bot') {
+                    updateAnalytics('message_received');
+                }
+                originalAddMessageToChat.apply(this, arguments);
+            };
+            
+            // Track language changes
+            document.querySelectorAll('.dropdown-item[data-lang]').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    const newLanguage = this.getAttribute('data-lang');
+                    updateAnalytics('language_changed', newLanguage);
+                    updateAnalytics('feature_used', 'multilingual');
+                });
+            });
+            
+            // Track simplify toggle
+            document.getElementById('simplify-toggle').addEventListener('change', function() {
+                if (this.checked) {
+                    updateAnalytics('feature_used', 'simplify');
+                }
+            });
+            
+            // Track features usage
+            document.getElementById('document-btn').addEventListener('click', function() {
+                updateAnalytics('feature_used', 'documents');
+            });
+            
+            document.getElementById('timeline-btn').addEventListener('click', function() {
+                updateAnalytics('feature_used', 'timelines');
+            });
+            
+            document.getElementById('resources-btn').addEventListener('click', function() {
+                updateAnalytics('feature_used', 'resources');
+            });
+            
+            document.getElementById('faq-btn').addEventListener('click', function() {
+                updateAnalytics('feature_used', 'faq');
+            });
+            
+            // Track quick questions usage
+            document.querySelectorAll('.question-chip').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    updateAnalytics('feature_used', 'faq');
+                });
+            });
+            
+            // Track voice input usage
+            if (document.getElementById('mic-btn')) {
+                document.getElementById('mic-btn').addEventListener('click', function() {
+                    updateAnalytics('feature_used', 'voice');
+                });
+            }
+            
+            // Analytics modal events
+            document.getElementById('analytics-btn').addEventListener('click', function() {
+                document.getElementById('analytics-modal').style.display = 'block';
+                updateAnalyticsDashboard();
+            });
+            
+            document.getElementById('close-analytics-modal').addEventListener('click', function() {
+                document.getElementById('analytics-modal').style.display = 'none';
+            });
+            
+            document.getElementById('reset-analytics-btn').addEventListener('click', function() {
+                if (confirm('Are you sure you want to reset all analytics data?')) {
+                    localStorage.removeItem('nyaaysaathi_analytics');
+                    initAnalytics();
+                    updateAnalyticsDashboard();
+                }
+            });
+            
+            document.getElementById('download-analytics-btn').addEventListener('click', function() {
+                downloadAnalyticsReport();
+            });
+        }
+
+        // Voice input implementation
+        let recognition;
+        let isListening = false;
+
+        function setupSpeechRecognition() {
+            // Check if browser supports Speech Recognition
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (SpeechRecognition) {
+                // Create a new speech recognition instance
+                recognition = new SpeechRecognition();
+                
+                // Set properties
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-IN'; // Default language (will be updated based on selected language)
+                
+                // Add a microphone button to the input group
+                const inputGroup = document.querySelector('.input-group');
+                const micButton = document.createElement('button');
+                micButton.type = 'button';
+                micButton.id = 'mic-btn';
+                micButton.className = 'btn btn-secondary mic-btn';
+                micButton.innerHTML = '<i class="fas fa-microphone"></i>';
+                
+                // Insert the button before the send button
+                inputGroup.insertBefore(micButton, document.getElementById('send-btn'));
+                
+                // Add event listeners
+                micButton.addEventListener('click', toggleSpeechRecognition);
+                
+                // Handle speech recognition results
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('user-input').value = transcript;
+                };
+                
+                // Handle speech recognition end
+                recognition.onend = function() {
+                    isListening = false;
+                    document.getElementById('mic-btn').innerHTML = '<i class="fas fa-microphone"></i>';
+                    document.getElementById('mic-btn').classList.remove('listening');
+                };
+                
+                // Handle speech recognition errors
+                recognition.onerror = function(event) {
+                    console.error('Speech recognition error:', event.error);
+                    isListening = false;
+                    document.getElementById('mic-btn').innerHTML = '<i class="fas fa-microphone"></i>';
+                    document.getElementById('mic-btn').classList.remove('listening');
+                    
+                    // Show error message
+                    if (event.error === 'no-speech') {
+                        showToast('No speech detected. Please try again.');
+                    } else if (event.error === 'not-allowed') {
+                        showToast('Microphone access denied. Please allow microphone access in your browser settings.');
+                    } else {
+                        showToast('Speech recognition error. Please try again.');
+                    }
+                };
+                
+                return true;
+            } else {
+                console.error('Speech Recognition not supported in this browser.');
+                return false;
+            }
+        }
+
+        // Toggle speech recognition
+        function toggleSpeechRecognition() {
+            if (!recognition) {
+                showToast('Speech recognition not supported in this browser.');
+                return;
+            }
+            
+            if (isListening) {
+                // Stop listening
+                recognition.stop();
+                isListening = false;
+                document.getElementById('mic-btn').innerHTML = '<i class="fas fa-microphone"></i>';
+                document.getElementById('mic-btn').classList.remove('listening');
+            } else {
+                // Update recognition language based on selected language
+                updateRecognitionLanguage();
+                
+                // Start listening
+                try {
+                    recognition.start();
+                    isListening = true;
+                    document.getElementById('mic-btn').innerHTML = '<i class="fas fa-microphone-slash"></i>';
+                    document.getElementById('mic-btn').classList.add('listening');
+                } catch (error) {
+                    console.error('Speech recognition error:', error);
+                    showToast('Failed to start speech recognition. Please try again.');
+                }
+            }
+        }
+
+        // Update speech recognition language based on selected language
+        function updateRecognitionLanguage() {
+            if (!recognition) return;
+            
+            const langMap = {
+                'English': 'en-IN',
+                'Hinglish': 'en-IN', // No specific code for Hinglish
+                'Hindi': 'hi-IN',
+                'Bengali': 'bn-IN',
+                'Tamil': 'ta-IN',
+                'Telugu': 'te-IN',
+                'Marathi': 'mr-IN',
+                'Gujarati': 'gu-IN',
+                'Kannada': 'kn-IN'
+            };
+            
+            const currentLanguage = document.getElementById('language-badge').textContent;
+            recognition.lang = langMap[currentLanguage] || 'en-IN';
+        }
+
+        // Show toast message
+        function showToast(message) {
+            // Create toast container if it doesn't exist
+            let toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toast-container';
+                toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                document.body.appendChild(toastContainer);
+            }
+            
+            // Create toast
+            const toastId = 'toast-' + Date.now();
+            const toast = document.createElement('div');
+            toast.id = toastId;
+            toast.className = 'toast';
+            toast.role = 'alert';
+            toast.ariaLive = 'assertive';
+            toast.ariaAtomic = 'true';
+            
+            toast.innerHTML = `
+                <div class="toast-header">
+                    <strong class="me-auto">Nyaay Saathi</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    ${message}
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Initialize and show toast
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            // Remove toast after it's hidden
+            toast.addEventListener('hidden.bs.toast', function() {
+                toast.remove();
+            });
+        }
+
+        // Load FAQs from server
+        function loadFAQs() {
+            fetch('/api/faqs')
+                .then(response => response.json())
+                .then(data => {
+                    populateFAQs(data.faqs);
+                })
+                .catch(error => {
+                    console.error('Error loading FAQs:', error);
+                    document.getElementById('faqAccordion').innerHTML = `
+                        <div class="alert alert-danger" role="alert">
+                            Failed to load FAQs. Please try again.
+                        </div>
+                    `;
+                });
+        }
+        // Populate FAQs in the accordion
+        function populateFAQs(faqs) {
+            const faqAccordion = document.getElementById('faqAccordion');
+            faqAccordion.innerHTML = '';
+            
+            if (faqs.length === 0) {
+                faqAccordion.innerHTML = `
+                    <div class="alert alert-info" role="alert">
+                        No FAQs found. Please try a different search.
+                    </div>
+                `;
+                return;
+            }
+            
+            faqs.forEach((faq, index) => {
+                const accordionItem = document.createElement('div');
+                accordionItem.className = 'accordion-item';
+                
+                // Format the question and answer for display
+                const questionText = faq.question;
+                let answerText = faq.answer;
+                
+                // If answer contains disclaimer, remove it for display
+                if (answerText.includes("I am an AI assistant and not a licensed legal advisor")) {
+                    answerText = answerText.split("I am an AI assistant and not a licensed legal advisor")[0].trim();
+                }
+                
+                accordionItem.innerHTML = `
+                    <h2 class="accordion-header" id="heading${index}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}" aria-expanded="false" aria-controls="collapse${index}">
+                            ${questionText}
+                        </button>
+                    </h2>
+                    <div id="collapse${index}" class="accordion-collapse collapse" aria-labelledby="heading${index}" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            <div class="faq-answer">
+                                ${answerText.replace(/\n/g, '<br>')}
+                            </div>
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-primary ask-question-btn" data-question="${questionText}">
+                                    <i class="fas fa-comment"></i> Ask this question
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                faqAccordion.appendChild(accordionItem);
+            });
+            
+            // Add event listeners to "Ask this question" buttons
+            document.querySelectorAll('.ask-question-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const question = this.getAttribute('data-question');
+                    document.getElementById('user-input').value = question;
+                    document.getElementById('faq-modal').style.display = 'none';
+                    sendMessage();
+                });
+            });
+        }
+
+        // Search FAQs
+        function searchFAQs() {
+            const searchTerm = document.getElementById('faq-search').value.trim().toLowerCase();
+            
+            if (searchTerm === '') {
+                loadFAQs();
+                return;
+            }
+            
+            fetch('/api/faqs')
+                .then(response => response.json())
+                .then(data => {
+                    const filteredFAQs = data.faqs.filter(faq => 
+                        faq.question.toLowerCase().includes(searchTerm) || 
+                        faq.answer.toLowerCase().includes(searchTerm)
+                    );
+                    
+                    populateFAQs(filteredFAQs);
+                })
+                .catch(error => {
+                    console.error('Error searching FAQs:', error);
+                });
+        }
+
+        // Add message to chat function
+        function addMessageToChat(message, sender) {
+            // Add to messages history
+            allMessages.push({
+                role: sender === 'user' ? 'user' : 'assistant',
+                content: message
+            });
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            
+            if (sender === 'user') {
+                messageDiv.classList.add('user-message');
+                messageDiv.innerHTML = `<p>${message}</p>`;
+            } else {
+                messageDiv.classList.add('bot-message');
+                
+                // Check if message contains disclaimer
+                if (message.includes("I am an AI assistant and not a licensed legal advisor")) {
+                    // Split the message and disclaimer
+                    const parts = message.split("I am an AI assistant and not a licensed legal advisor");
+                    const mainMessage = parseMarkdown(parts[0]); // Use markdown parser
+                    
+                    messageDiv.innerHTML = `
+                        ${mainMessage}
+                        <p class="disclaimer">I am an AI assistant and not a licensed legal advisor${parts[1] || ". Please consult a lawyer for serious or urgent matters."}</p>
+                    `;
+                } else {
+                    const formattedMessage = parseMarkdown(message); // Use markdown parser
+                    messageDiv.innerHTML = `
+                        ${formattedMessage}
+                        <p class="disclaimer">I am an AI assistant and not a licensed legal advisor. Please consult a lawyer for serious or urgent matters.</p>
+                    `;
+                }
+            }
+            
+            chatBody.appendChild(messageDiv);
+            
+            // Remove quick questions after first user message
+            if (sender === 'user' && document.querySelector('.quick-questions')) {
+                document.querySelector('.quick-questions').remove();
+            }
+            
+            // Scroll to bottom
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Fix modal scrolling issues
+            window.addEventListener('click', function(event) {
+                // After any modal shows, ensure content is scrollable
+                if (event.target.classList.contains('modal') && event.target.style.display === 'block') {
+                    const modalContent = event.target.querySelector('.modal-content');
+                    if (modalContent) {
+                        modalContent.style.overflowY = 'auto';
+                    }
+                }
+                // Debug function to help visualize message formatting issues
+                function debugMessageFormat(message) {
+                    console.log("Message content:", message);
+                    console.log("Message with visible newlines:", message.replace(/\n/g, "\\n"));
+                }
+            });
+
+            // Simple Markdown parser for chat messages
+            function parseMarkdown(text) {
+                if (!text) return '';
+                
+                // Handle paragraphs
+                text = text.replace(/\n\s*\n/g, '</p><p>');
+                
+                // Handle bold text
+                text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                
+                // Handle italic text
+                text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+                
+                // Handle line breaks
+                text = text.replace(/\n/g, '<br>');
+                
+                // Handle numbered lists
+                let listFound = false;
+                text = text.replace(/^(\d+)\.\s+(.*?)$/gm, function(match, number, item) {
+                    listFound = true;
+                    return '<li>' + item + '</li>';
+                });
+                
+                if (listFound) {
+                    text = '<ol>' + text + '</ol>';
+                    // Clean up any non-list content that got wrapped
+                    text = text.replace(/<ol>(.*?)(<li>)/s, '<ol>$2');
+                    text = text.replace(/(<\/li>)(.*?)<\/ol>/s, '$1</ol>$2');
+                }
+                
+                // Handle bullet lists
+                listFound = false;
+                text = text.replace(/^[-*]\s+(.*?)$/gm, function(match, item) {
+                    listFound = true;
+                    return '<li>' + item + '</li>';
+                });
+                
+                if (listFound) {
+                    text = '<ul>' + text + '</ul>';
+                    // Clean up any non-list content that got wrapped
+                    text = text.replace(/<ul>(.*?)(<li>)/s, '<ul>$2');
+                    text = text.replace(/(<\/li>)(.*?)<\/ul>/s, '$1</ul>$2');
+                }
+                
+                // Return with paragraph wrapping
+                return '<p>' + text + '</p>';
+            }
+
+            // Event delegation for dynamically created elements
+            document.addEventListener('click', function(event) {
+                // Handle view full analysis button click via delegation
+                if (event.target.id === 'view-full-analysis-btn' || event.target.parentElement.id === 'view-full-analysis-btn') {
+                    // The same code as the view-full-analysis-btn event listener above
+                    // (You can copy it here if needed)
+                }
+                // Debug function to help visualize message formatting issues
+                function debugMessageFormat(message) {
+                    console.log("Message content:", message);
+                    console.log("Message with visible newlines:", message.replace(/\n/g, "\\n"));
+                }
+            });
+            // Initialize user authentication
+            getCurrentUser();
+            
+            // Initialize voice input
+            const speechSupported = setupSpeechRecognition();
+            
+            if (!speechSupported) {
+                console.log('Speech recognition not supported in this browser.');
+            }
+
+            const chatBody = document.getElementById('chat-body');
+            const userInput = document.getElementById('user-input');
+            const sendBtn = document.getElementById('send-btn');
+            const loader = document.querySelector('.loader');
+            const resetBtn = document.getElementById('reset-chat');
+            const languageBadge = document.getElementById('language-badge');
+            const questionChips = document.querySelectorAll('.question-chip');
+            const simplifyToggle = document.getElementById('simplify-toggle');
+            
+            // Feature buttons
+            const documentBtn = document.getElementById('document-btn');
+            const timelineBtn = document.getElementById('timeline-btn');
+            const resourcesBtn = document.getElementById('resources-btn');
+            const faqBtn = document.getElementById('faq-btn');
+            
+            // Modals
+            const documentModal = document.getElementById('document-modal');
+            const timelineModal = document.getElementById('timeline-modal');
+            const resourcesModal = document.getElementById('resources-modal');
+            const faqModal = document.getElementById('faq-modal');
+            
+            // Close buttons
+            const closeDocumentModal = document.getElementById('close-document-modal');
+            const closeTimelineModal = document.getElementById('close-timeline-modal');
+            const closeResourcesModal = document.getElementById('close-resources-modal');
+            const closeFaqModal = document.getElementById('close-faq-modal');
+            
+            // Template selectors
+            const templateSelect = document.getElementById('template-select');
+            const timelineSelect = document.getElementById('timeline-select');
+            const resourceTypeSelect = document.getElementById('resource-type-select');
+            
+            // Containers
+            const templateFormContainer = document.getElementById('template-form-container');
+            const timelineContainer = document.getElementById('timeline-container');
+            const resourcesContainer = document.getElementById('resources-container');
+            
+            // Generated document
+            const generatedDocument = document.getElementById('generated-document');
+            const documentTitle = document.getElementById('document-title');
+            const documentContent = document.getElementById('document-content');
+            const copyDocument = document.getElementById('copy-document');
+            
+            // Get location button
+            const getLocationBtn = document.getElementById('get-location-btn');
+            
+            // FAQ search button
+            const faqSearchBtn = document.getElementById('faq-search-btn');
+            
+            let currentLanguage = 'English';
+            let simplifyEnabled = false;
+            
+            // Initialize analytics
+            initAnalytics();
+            
+            // Attach event listeners for analytics
+            hookAnalyticsEvents();
+            
+            // Language selection
+            const languageDropdownItems = document.querySelectorAll('.dropdown-item[data-lang]');
+            languageDropdownItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const selectedLanguage = this.getAttribute('data-lang');
+                    currentLanguage = selectedLanguage;
+                    document.getElementById('language-badge').textContent = selectedLanguage;
+                    
+                    // Display language change message
+                    const messages = {
+                        'English': "I'll now respond in English. How can I help you?",
+                        'Hinglish': "Main ab Hinglish mein jawab dunga. Main aapki kaise madad kar sakta hoon?",
+                        'Hindi': "मैं अब हिंदी में जवाब दूंगा। मैं आपकी कैसे मदद कर सकता हूँ?",
+                        'Bengali': "এখন আমি বাংলায় উত্তর দেব। আমি আপনাকে কিভাবে সাহায্য করতে পারি?",
+                        'Tamil': "நான் இப்போது தமிழில் பதிலளிப்பேன். நான் உங்களுக்கு எப்படி உதவ முடியும்?",
+                        'Telugu': "నేను ఇప్పుడు తెలుగులో సమాధానం ఇస్తాను. నేను మీకు ఎలా సహాయం చేయగలను?",
+                        'Marathi': "मी आता मराठीत उत्तर देईन. मी तुम्हाला कशी मदत करू शकतो?",
+                        'Gujarati': "હવે હું ગુજરાતીમાં જવાબ આપીશ. હું તમને કેવી રીતે મદદ કરી શકું?",
+                        'Kannada': "ನಾನು ಈಗ ಕನ್ನಡದಲ್ಲಿ ಉತ್ತರಿಸುತ್ತೇನೆ. ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಬಹುದು?"
+                    };
+                    
+                    addMessageToChat(messages[selectedLanguage] || messages['English'], 'bot');
+                });
+            });
+            
+            // Event listeners
+            sendBtn.addEventListener('click', sendMessage);
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Quick question chips
+            questionChips.forEach(chip => {
+                chip.addEventListener('click', function() {
+                    userInput.value = this.textContent;
+                    sendMessage();
+                });
+            });
+            
+            // Reset chat
+            resetBtn.addEventListener('click', function() {
+                fetch('/api/reset', {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Clear chat except for the welcome message
+                    while (chatBody.children.length > 1) {
+                        chatBody.removeChild(chatBody.lastChild);
+                    }
+                    
+                    // Reset allMessages array
+                    allMessages = [];
+                    
+                    // Add back quick questions
+                    if (!document.querySelector('.quick-questions')) {
+                        const quickQuestions = document.createElement('div');
+                        quickQuestions.classList.add('quick-questions');
+                        quickQuestions.innerHTML = `
+                            <div class="question-chip">How to file an FIR?</div>
+                            <div class="question-chip">Rights during arrest</div>
+                            <div class="question-chip">Consumer complaint process</div>
+                            <div class="question-chip">RTI application procedure</div>
+                        `;
+                        chatBody.appendChild(quickQuestions);
+                        
+                        // Re-add event listeners to new chips
+                        document.querySelectorAll('.question-chip').forEach(chip => {
+                            chip.addEventListener('click', function() {
+                                userInput.value = this.textContent;
+                                sendMessage();
+                            });
+                        });
+                    }
+                });
+            });
+            
+            // Toggle simplify
+            simplifyToggle.addEventListener('change', function() {
+                simplifyEnabled = this.checked;
+                
+                // Display simplify change message
+                const message = simplifyEnabled 
+                    ? "I'll now simplify legal terms in my responses." 
+                    : "I'll use standard legal terminology in my responses.";
+                addMessageToChat(message, 'bot');
+            });
+            
+            // Document button
+            documentBtn.addEventListener('click', function() {
+                documentModal.style.display = 'block';
+            });
+            
+            // Timeline button
+            timelineBtn.addEventListener('click', function() {
+                timelineModal.style.display = 'block';
+            });
+            
+            // Resources button
+            resourcesBtn.addEventListener('click', function() {
+                resourcesModal.style.display = 'block';
+            });
+            
+            // FAQ button
+            faqBtn.addEventListener('click', function() {
+                faqModal.style.display = 'block';
+                loadFAQs();
+            });
+            
+            // Close buttons
+            closeDocumentModal.addEventListener('click', function() {
+                documentModal.style.display = 'none';
+            });
+            
+            closeTimelineModal.addEventListener('click', function() {
+                timelineModal.style.display = 'none';
+            });
+            
+            closeResourcesModal.addEventListener('click', function() {
+                resourcesModal.style.display = 'none';
+            });
+            
+            closeFaqModal.addEventListener('click', function() {
+                faqModal.style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === document.getElementById('history-modal')) {
+                    document.getElementById('history-modal').style.display = 'none';
+                }
+                if (event.target === documentModal) {
+                    documentModal.style.display = 'none';
+                }
+                if (event.target === timelineModal) {
+                    timelineModal.style.display = 'none';
+                }
+                if (event.target === resourcesModal) {
+                    resourcesModal.style.display = 'none';
+                }
+                if (event.target === faqModal) {
+                    faqModal.style.display = 'none';
+                }
+                if (event.target === document.getElementById('analytics-modal')) {
+                    document.getElementById('analytics-modal').style.display = 'none';
+                }
+            });
+            
+            // Document template select
+            templateSelect.addEventListener('change', function() {
+                const templateId = this.value;
+                if (!templateId) {
+                    templateFormContainer.innerHTML = '';
+                    generatedDocument.style.display = 'none';
+                    return;
+                }
+                
+                generateTemplateForm(templateId);
+            });
+            
+            // Timeline select
+            timelineSelect.addEventListener('change', function() {
+                const timelineId = this.value;
+                if (!timelineId) {
+                    timelineContainer.innerHTML = '';
+                    return;
+                }
+                
+                fetchTimeline(timelineId);
+            });
+            
+            // Resource type select
+            resourceTypeSelect.addEventListener('change', function() {
+                if (navigator.geolocation) {
+                    getLocationBtn.disabled = false;
+                }
+            });
+            
+            // Get location button
+            getLocationBtn.addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    getLocationBtn.disabled = true;
+                    getLocationBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Getting location...';
+                    
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        const resourceType = resourceTypeSelect.value;
+                        
+                        fetchNearbyResources(lat, lon, resourceType);
+                        
+                        getLocationBtn.disabled = false;
+                        getLocationBtn.innerHTML = '<i class="fas fa-location-arrow"></i> Use My Location';
+                    }, function(error) {
+                        console.error('Error getting location:', error);
+                        getLocationBtn.disabled = false;
+                        getLocationBtn.innerHTML = '<i class="fas fa-location-arrow"></i> Use My Location';
+                        
+                        // Use demo location for Bangalore
+                        const lat = 12.9716;
+                        const lon = 77.5946;
+                        const resourceType = resourceTypeSelect.value;
+                        
+                        fetchNearbyResources(lat, lon, resourceType);
+                    });
+                } else {
+                    alert("Geolocation is not supported by this browser.");
+                }
+            });
+            
+            // Copy document button
+            copyDocument.addEventListener('click', function() {
+                const textToCopy = documentContent.textContent;
+                navigator.clipboard.writeText(textToCopy).then(function() {
+                    copyDocument.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    setTimeout(function() {
+                        copyDocument.innerHTML = '<i class="fas fa-copy"></i> Copy to Clipboard';
+                    }, 2000);
+                }).catch(function(err) {
+                    console.error('Could not copy text: ', err);
+                });
+            });
+
+            // Download document as PDF
+            document.getElementById('download-pdf-document').addEventListener('click', function() {
+                const templateId = generatedDocument.dataset.templateId;
+                const fields = JSON.parse(generatedDocument.dataset.fields || '{}');
+                
+                if (!templateId) {
+                    alert('No document available to download.');
+                    return;
+                }
+                
+                // Create form for POST request
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/api/generate_document_pdf';
+                form.target = '_blank'; // Open in new tab
+                form.style.display = 'none';
+                
+                // Add template ID
+                const templateInput = document.createElement('input');
+                templateInput.type = 'hidden';
+                templateInput.name = 'template_id';
+                templateInput.value = templateId;
+                form.appendChild(templateInput);
+                
+                // Add fields
+                const fieldsInput = document.createElement('input');
+                fieldsInput.type = 'hidden';
+                fieldsInput.name = 'fields';
+                fieldsInput.value = JSON.stringify(fields);
+                form.appendChild(fieldsInput);
+                
+                // Add form to document and submit
+                document.body.appendChild(form);
+                
+                // For safety, use fetch API instead of form submit for better error handling
+                fetch('/api/generate_document_pdf', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        template_id: templateId,
+                        fields: fields
+                    }),
+                    responseType: 'blob'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('PDF generation failed');
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    // Create download link
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = documentTitle.textContent.replace(/\s+/g, '_') + '.pdf';
+                    
+                    // Append to body, click and remove
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                    }, 100);
+                })
+                .catch(error => {
+                    console.error('Error downloading PDF:', error);
+                    alert('Error generating PDF. Please try again.');
+                });
+                
+                // Remove form
+                document.body.removeChild(form);
+            });
+            
+            // FAQ search functionality
+            faqSearchBtn.addEventListener('click', searchFAQs);
+            document.getElementById('faq-search').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    searchFAQs();
+                }
+            });
+            
+            // Generate template form
+            function generateTemplateForm(templateId) {
+                fetch(`/api/document_template/${templateId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const template = data.template;
+                        const placeholders = extractPlaceholders(template);
+                        
+                        let formHtml = '<form id="template-form" class="row g-3">';
+                        
+                        placeholders.forEach(placeholder => {
+                            const fieldId = placeholder.replace(/[{}]/g, '');
+                            const fieldLabel = fieldId
+                                .replace(/_/g, ' ')
+                                .replace(/\b\w/g, l => l.toUpperCase());
+                            
+                            formHtml += `
+                                <div class="col-md-6">
+                                    <label for="${fieldId}" class="form-label">${fieldLabel}</label>
+                                    <input type="text" class="form-control" id="${fieldId}" name="${fieldId}">
+                                </div>
+                            `;
+                        });
+                        
+                        formHtml += `
+                            <div class="col-12 mt-3">
+                                <button type="submit" class="btn btn-primary">Generate Document</button>
+                            </div>
+                        </form>`;
+                        
+                        templateFormContainer.innerHTML = formHtml;
+                        
+                        // Add form submit event listener
+                        document.getElementById('template-form').addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            
+                            const formData = new FormData(this);
+                            const fields = {};
+                            
+                            for (const [key, value] of formData.entries()) {
+                                fields[key] = value;
+                            }
+                            
+                            generateDocument(templateId, fields);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching template:', error);
+                        templateFormContainer.innerHTML = '<p class="text-danger">Error loading template. Please try again.</p>';
+                    });
+            }
+            
+            // Extract placeholders from template
+            function extractPlaceholders(template) {
+                const placeholderRegex = /\{([^}]+)\}/g;
+                const placeholders = [];
+                let match;
+                
+                while ((match = placeholderRegex.exec(template)) !== null) {
+                    if (!placeholders.includes(match[0])) {
+                        placeholders.push(match[0]);
+                    }
+                }
+                
+                return placeholders;
+            }
+            
+            // Generate document
+            function generateDocument(templateId, fields) {
+                fetch('/api/generate_document', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        template_id: templateId,
+                        fields: fields
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    documentTitle.textContent = data.title;
+                    documentContent.textContent = data.document;
+                    generatedDocument.style.display = 'block';
+                    
+                    // Store the current template and fields for PDF download
+                    generatedDocument.dataset.templateId = templateId;
+                    generatedDocument.dataset.fields = JSON.stringify(fields);
+                })
+                .catch(error => {
+                    console.error('Error generating document:', error);
+                    alert('Error generating document. Please try again.');
+                });
+            }
+            
+            // Fetch timeline
+            function fetchTimeline(timelineId) {
+                fetch(`/api/legal_timeline/${timelineId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const timeline = data.timeline;
+                        
+                        let timelineHtml = '';
+                        
+                        timeline.forEach((item, index) => {
+                            timelineHtml += `
+                                <div class="timeline-item">
+                                    <div class="timeline-marker">${index + 1}</div>
+                                    <div class="timeline-content">
+                                        <h5>${item.step}</h5>
+                                        <div class="timeline-timeframe">${item.timeframe}</div>
+                                        <p>${item.details}</p>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        
+                        timelineContainer.innerHTML = timelineHtml;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching timeline:', error);
+                        timelineContainer.innerHTML = '<p class="text-danger">Error loading timeline. Please try again.</p>';
+                    });
+            }
+            
+            // Fetch nearby resources
+            function fetchNearbyResources(latitude, longitude, resourceType) {
+                fetch('/api/nearby_resources', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        latitude: latitude,
+                        longitude: longitude,
+                        type: resourceType
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const resources = data.resources;
+                    
+                    let resourcesHtml = '';
+                    
+                    resources.forEach(resource => {
+                        resourcesHtml += `
+                            <div class="resource-item">
+                                <h5>${resource.name}</h5>
+                                <p><i class="fas fa-map-marker-alt"></i> ${resource.address}</p>
+                                <p><i class="fas fa-phone"></i> ${resource.phone}</p>
+                                <p class="resource-distance"><i class="fas fa-walking"></i> ${resource.distance}</p>
+                                <a href="https://maps.google.com/?q=${resource.name} ${resource.address}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-directions"></i> Get Directions
+                                </a>
+                            </div>
+                        `;
+                    });
+                    
+                    resourcesContainer.innerHTML = resourcesHtml;
+                })
+                .catch(error => {
+                    console.error('Error fetching resources:', error);
+                    resourcesContainer.innerHTML = '<p class="text-danger">Error loading resources. Please try again.</p>';
+                });
+            }
+            
+            // Check if geolocation is available
+            if (!navigator.geolocation) {
+                getLocationBtn.disabled = true;
+                getLocationBtn.innerHTML = 'Geolocation not available';
+            }
+            
+            // Register service worker for PWA support
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/static/service-worker.js').then(function(registration) {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    }, function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+                });
+            }
+            
+            // Update analytics dashboard periodically
+            setInterval(updateAnalyticsDashboard, 30000);
+        });
+        // Simple Markdown parser for chat messages
+        function parseMarkdown(text) {
+            if (!text) return '';
+            
+            // Handle paragraphs
+            text = text.replace(/\n\s*\n/g, '</p><p>');
+            
+            // Handle bold text
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Handle italic text
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            // Handle line breaks
+            text = text.replace(/\n/g, '<br>');
+            
+            // Handle numbered lists
+            let listFound = false;
+            text = text.replace(/^(\d+)\.\s+(.*?)$/gm, function(match, number, item) {
+                listFound = true;
+                return '<li>' + item + '</li>';
+            });
+            
+            if (listFound) {
+                text = '<ol>' + text + '</ol>';
+                // Clean up any non-list content that got wrapped
+                text = text.replace(/<ol>(.*?)(<li>)/s, '<ol>$2');
+                text = text.replace(/(<\/li>)(.*?)<\/ol>/s, '$1</ol>$2');
+            }
+            
+            // Handle bullet lists
+            listFound = false;
+            text = text.replace(/^[-*]\s+(.*?)$/gm, function(match, item) {
+                listFound = true;
+                return '<li>' + item + '</li>';
+            });
+            
+            if (listFound) {
+                text = '<ul>' + text + '</ul>';
+                // Clean up any non-list content that got wrapped
+                text = text.replace(/<ul>(.*?)(<li>)/s, '<ul>$2');
+                text = text.replace(/(<\/li>)(.*?)<\/ul>/s, '$1</ul>$2');
+            }
+            
+            // Return with paragraph wrapping
+            return '<p>' + text + '</p>';
+        }
+        // Global speech function
+        function speakThis(button) {
+            // Get the text to speak from the button's data attribute
+            const text = button.getAttribute('data-text');
+            if (!text) return;
+            
+            console.log("Speaking:", text);
+            
+            // Check if speech synthesis is available
+            if (!window.speechSynthesis) {
+                console.error("Speech synthesis not supported");
+                alert("Speech synthesis is not supported in your browser");
+                return;
+            }
+            
+            // Cancel any ongoing speech
+            window.speechSynthesis.cancel();
+            
+            // Visual feedback - add/remove 'speaking' class
+            const allButtons = document.querySelectorAll('.speak-btn');
+            allButtons.forEach(btn => {
+                btn.classList.remove('speaking');
+                btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            });
+            
+            // Is this button already speaking?
+            if (button.classList.contains('speaking')) {
+                button.classList.remove('speaking');
+                return; // Stop speaking if already speaking
+            }
+            
+            // Mark this button as speaking
+            button.classList.add('speaking');
+            button.innerHTML = '<i class="fas fa-pause"></i>';
+            
+            // Create a new speech utterance
+            const utterance = new SpeechSynthesisUtterance(text);
+            
+            // Set preferred voice if available
+            const voices = window.speechSynthesis.getVoices();
+            const indianVoice = voices.find(voice => 
+                voice.lang === 'en-IN' || 
+                voice.name.includes('Indian') ||
+                voice.name.includes('Hindi')
+            );
+            
+            if (indianVoice) {
+                utterance.voice = indianVoice;
+            } else if (voices.length > 0) {
+                // Just use any available voice
+                utterance.voice = voices[0];
+            }
+            
+            // Speech ended handler
+            utterance.onend = function() {
+                button.classList.remove('speaking');
+                button.innerHTML = '<i class="fas fa-volume-up"></i>';
+            };
+            
+            // Speech error handler
+            utterance.onerror = function(event) {
+                console.error("Speech error:", event);
+                button.classList.remove('speaking');
+                button.innerHTML = '<i class="fas fa-volume-up"></i>';
+                alert("Speech error: " + (event.error || "Unknown error"));
+            };
+            
+            // Start speaking
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Initialize voices as soon as possible
+        try {
+            window.speechSynthesis.getVoices();
+        } catch(e) {
+            console.error("Error initializing voices:", e);
+        }
+
+    </script>
+    <script src="/static/fix.js"></script>
+    <script src="/static/fullscreen.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Document upload functionality
+        const documentUploadBtn = document.getElementById('document-upload-btn');
+        const documentUploadModal = document.getElementById('document-upload-modal');
+        const closeDocumentUploadModal = document.getElementById('close-document-upload-modal');
+        const documentUploadForm = document.getElementById('document-upload-form');
+        const documentUploadStatus = document.getElementById('document-upload-status');
+        const documentAnalysisResult = document.getElementById('document-analysis-result');
+        const documentType = document.getElementById('document-type');
+        const documentSummary = document.getElementById('document-summary');
+        const documentKeyPoints = document.getElementById('document-key-points');
+        const addToChatBtn = document.getElementById('add-to-chat-btn');
+        
+        let currentDocumentAnalysis = null;
+        
+        // Show upload modal
+        documentUploadBtn.addEventListener('click', function() {
+            documentUploadModal.style.display = 'block';
+            
+            // Reset form and results
+            documentUploadForm.reset();
+            documentUploadStatus.classList.add('d-none');
+            documentAnalysisResult.classList.add('d-none');
+        });
+        
+        // Close upload modal
+        closeDocumentUploadModal.addEventListener('click', function() {
+            documentUploadModal.style.display = 'none';
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === documentUploadModal) {
+                documentUploadModal.style.display = 'none';
+            }
+        });
+        
+        // Handle document upload
+        documentUploadForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('document-file');
+            if (!fileInput.files.length) {
+                showToast('Please select a document to upload');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
+            
+            if (!allowedTypes.includes(file.type)) {
+                showToast('Please upload a PDF, Word document, or text file');
+                return;
+            }
+            
+            // Show loading state
+            documentUploadStatus.classList.remove('d-none');
+            documentAnalysisResult.classList.add('d-none');
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('document', file);
+            
+            // Send request
+            fetch('/api/upload-document', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading state
+                documentUploadStatus.classList.add('d-none');
+                
+                if (data.success) {
+                    // Store current analysis
+                    currentDocumentAnalysis = data;
+                    
+                    // Update UI with results
+                    documentType.textContent = data.document_type || 'Legal Document Analysis';
+                    documentSummary.textContent = data.summary || 'No summary available';
+                    
+                    // Clear and populate key points
+                    documentKeyPoints.innerHTML = '';
+                    if (data.key_points && data.key_points.length > 0) {
+                        data.key_points.forEach(point => {
+                            const li = document.createElement('li');
+                            li.textContent = point;
+                            li.style.wordBreak = 'break-word'; // Help with long words
+                            li.style.marginBottom = '12px'; // Add space between points
+                            documentKeyPoints.appendChild(li);
+                        });
+                    } else {
+                        const li = document.createElement('li');
+                        li.textContent = 'No key points identified';
+                        documentKeyPoints.appendChild(li);
+                    }
+                    
+                    // Show results
+                    documentAnalysisResult.classList.remove('d-none');
+                } else {
+                    showToast(data.error || 'Failed to analyze document');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                documentUploadStatus.classList.add('d-none');
+                showToast('An error occurred while analyzing the document');
+            });
+        });
+        
+        // Add analysis to chat
+        addToChatBtn.addEventListener('click', function() {
+            if (!currentDocumentAnalysis) {
+                return;
+            }
+            
+            // Format message for chat
+            const message = `I need help understanding this ${currentDocumentAnalysis.document_type}. Can you explain the document summary and key points in more detail?`;
+            
+            // Add to chat input
+            document.getElementById('user-input').value = message;
+            
+            // Close modal
+            documentUploadModal.style.display = 'none';
+            
+            // Optionally, auto-send the message
+            // if (typeof sendMessage === 'function') {
+            //     sendMessage();
+            // }
+        });
+        // Add event listener for view full analysis button
+        document.getElementById('view-full-analysis-btn').addEventListener('click', function() {
+            // Create a full-screen overlay
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.backgroundColor = 'rgba(0,0,0,0.9)';
+            overlay.style.zIndex = '2000';
+            overlay.style.padding = '30px';
+            overlay.style.overflow = 'auto';
+            
+            // Check for dark mode
+            const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Create content container
+            const content = document.createElement('div');
+            content.style.backgroundColor = isDarkMode ? '#1e1e1e' : '#fff';
+            content.style.padding = '30px';
+            content.style.borderRadius = '10px';
+            content.style.maxWidth = '900px';
+            content.style.margin = '0 auto';
+            content.style.color = isDarkMode ? '#e0e0e0' : '#333';
+            
+            // Close button
+            const closeBtn = document.createElement('button');
+            closeBtn.innerHTML = '&times;';
+            closeBtn.style.float = 'right';
+            closeBtn.style.fontSize = '24px';
+            closeBtn.style.border = 'none';
+            closeBtn.style.background = 'none';
+            closeBtn.style.color = isDarkMode ? '#e0e0e0' : '#333';
+            closeBtn.style.cursor = 'pointer';
+            closeBtn.onclick = function() { document.body.removeChild(overlay); };
+            
+            // Content header
+            const header = document.createElement('h2');
+            header.textContent = documentType.textContent;
+            
+            // Content body
+            const summaryTitle = document.createElement('h4');
+            summaryTitle.textContent = 'Summary';
+            
+            const summary = document.createElement('p');
+            summary.textContent = documentSummary.textContent;
+            
+            const pointsTitle = document.createElement('h4');
+            pointsTitle.textContent = 'Key Points';
+            
+            const pointsList = document.createElement('ul');
+            // Clone the points list
+            Array.from(documentKeyPoints.children).forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item.textContent;
+                li.style.marginBottom = '10px';
+                pointsList.appendChild(li);
+            });
+            
+            // Assemble the content
+            content.appendChild(closeBtn);
+            content.appendChild(header);
+            content.appendChild(summaryTitle);
+            content.appendChild(summary);
+            content.appendChild(pointsTitle);
+            content.appendChild(pointsList);
+            
+            overlay.appendChild(content);
+            document.body.appendChild(overlay);
+        });
+    });
+</script>
+    <div id="document-upload-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="close-document-upload-modal">&times;</span>
+        <h3>Upload Legal Document</h3>
+        <p>Upload a legal document to get a summary and explanation of key points.</p>
+        
+        <div class="upload-container">
+            <form id="document-upload-form" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="document-file" class="form-label">Select Document (PDF, Word, or Text file)</label>
+                    <input type="file" class="form-control" id="document-file" name="document" accept=".pdf,.doc,.docx,.txt">
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary" id="upload-btn">
+                        <i class="fas fa-upload"></i> Analyze Document
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div id="document-upload-status" class="mt-3 d-none">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Analyzing document, please wait...</p>
+        </div>
+        
+        <div id="document-analysis-result" class="mt-4 d-none">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0" id="document-type">Legal Document Analysis</h5>
+        </div>
+        <div class="card-body">
+            <div class="analysis-content">
+                <h6>Summary</h6>
+                <p id="document-summary"></p>
+                
+                <h6>Key Points</h6>
+                <ul id="document-key-points"></ul>
+                
+                <div class="mt-3">
+                    <button class="btn btn-outline-primary" id="add-to-chat-btn">
+                        <i class="fas fa-comment"></i> Send to Chat
+                    </button>
+                    <button class="btn btn-outline-secondary mt-2" id="view-full-analysis-btn">
+                        <i class="fas fa-expand"></i> View Full Analysis
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script src="/static/scroll-fix.js"></script>
+</body>
+</html>
