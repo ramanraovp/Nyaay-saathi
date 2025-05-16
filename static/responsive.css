@@ -1,0 +1,192 @@
+/* Responsive CSS for Nyaay Saathi - Add this to your existing CSS */
+
+/* Full screen for desktop */
+@media screen and (min-width: 992px) {
+    body {
+        overflow: hidden; /* Prevent scrolling on the main body */
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        width: 100vw;
+    }
+    
+    .container {
+        max-width: 100% !important;
+        padding: 0;
+        height: 100vh;
+    }
+    
+    .chat-container {
+        max-width: 100% !important;
+        margin: 0 !important;
+        height: 100vh;
+        border-radius: 0;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .chat-body {
+        flex: 1;
+        height: auto !important; /* Override the fixed height */
+        max-height: calc(100vh - 140px); /* Adjust based on header + input height */
+    }
+    
+    .features-row {
+        padding: 10px 20px !important;
+    }
+}
+
+/* Mobile optimization */
+@media screen and (max-width: 991px) {
+    body {
+        padding: 0;
+    }
+    
+    .container {
+        padding: 0;
+    }
+    
+    .chat-container {
+        margin: 0;
+        border-radius: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .chat-header {
+        padding: 10px;
+    }
+    
+    .chat-header h3 {
+        font-size: 1.5rem;
+    }
+    
+    .chat-body {
+        flex: 1;
+        height: auto !important;
+    }
+    
+    .features-row {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding: 8px;
+        /* Hide scrollbar but allow scrolling */
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+    
+    .features-row::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+    }
+    
+    .feature-btn {
+        white-space: nowrap;
+        font-size: 0.8rem;
+        padding: 5px 10px;
+    }
+    
+    .profile-dropdown {
+        right: 10px;
+        width: 80%;
+        max-width: 280px;
+    }
+    
+    /* Adjust sizes for messages */
+    .message {
+        max-width: 90%;
+        padding: 8px 12px;
+    }
+    
+    /* Make modals more mobile-friendly */
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+        max-height: 90vh;
+    }
+}
+
+/* Small mobile devices */
+@media screen and (max-width: 576px) {
+    .chat-header .simplify-toggle small {
+        display: none; /* Hide the "Simplify" text on very small screens */
+    }
+    
+    .language-toggle .dropdown-toggle {
+        min-width: 80px;
+        padding: 4px;
+        font-size: 0.75rem;
+    }
+    
+    .user-profile .profile-btn {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+    }
+    
+    .reset-btn, #analytics-btn {
+        font-size: 0.75rem;
+    }
+    
+    .chat-input {
+        padding: 10px;
+    }
+    
+    .input-group .form-control {
+        padding: 8px;
+    }
+    
+    /* Improve touch target sizes */
+    .btn {
+        min-height: 38px;
+    }
+}
+
+/* Fix height issues on mobile devices with browser navigation bars */
+@media screen and (max-height: 700px) {
+    .chat-body {
+        max-height: calc(100vh - 200px);
+    }
+    
+    .modal-content {
+        max-height: 80vh;
+    }
+}
+
+/* Portrait orientation adjustments for mobile */
+@media screen and (max-width: 991px) and (orientation: portrait) {
+    .chat-container {
+        height: 100vh;
+    }
+}
+
+/* Landscape orientation adjustments for mobile */
+@media screen and (max-width: 991px) and (orientation: landscape) {
+    .chat-header h3 {
+        font-size: 1.25rem;
+    }
+    
+    .chat-header small {
+        font-size: 0.75rem;
+    }
+    
+    .chat-body {
+        max-height: calc(100vh - 140px);
+    }
+}
+
+/* Handle notch-based phones */
+@supports (padding-top: env(safe-area-inset-top)) {
+    body {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+}
+
+/* Handle touch devices - increase touch targets */
+@media (hover: none) {
+    .question-chip, .feature-btn, .dropdown-item {
+        padding: 8px 15px;
+    }
+}
