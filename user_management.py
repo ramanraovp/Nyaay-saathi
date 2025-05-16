@@ -6,16 +6,25 @@ from flask import jsonify, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Constants
-USER_DB_FILE = 'user_db.json'
-
+# Constants
+# Use /tmp directory on Render which is writable
+USER_DB_FILE = os.path.join('/tmp', 'user_db.json')
 # User database functions
 def load_users():
     """Load user data from the database file"""
     if os.path.exists(USER_DB_FILE):
-        with open(USER_DB_FILE, 'r') as f:
-            return json.load(f)
-    return {'users': {}}
-
+        try:
+            with open(USER_DB_FILE, 'r') as f:
+                return json.load(f)
+        except (json.JSONDecodeError, IOError):
+            # If file is corrupted or can't be read, create a new one
+            pass
+    
+    # Create default user database if file doesn't exist
+    users = {'users': {}}
+    save_users(users)
+    return users
+    
 def save_users(users):
     """Save user data to the database file"""
     with open(USER_DB_FILE, 'w') as f:
