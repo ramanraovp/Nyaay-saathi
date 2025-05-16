@@ -10,7 +10,21 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# I am trying to load my environment variables from a existing env file I created.
+
+openai_api_key = os.getenv("OPENAI_API_KEY")
+if not openai_api_key:
+    raise ValueError("No OpenAI API key found")
+
+# Initialize OpenAI client safely
+try:
+    client = openai.OpenAI(api_key=openai_api_key)
+except TypeError as e:
+    if 'proxies' in str(e):
+        from openai import Client
+        client = Client(api_key=openai_api_key)
+    else:
+        raise
 
 class DocumentProcessor:
     """Process uploaded legal documents and extract relevant information"""
