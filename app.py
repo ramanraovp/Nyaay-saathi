@@ -73,6 +73,31 @@ def initialize_app():
     # Create template directories and files if needed
     create_login_template()
 
+@app.route('/test')
+def test_route():
+    # Check if we can write to the filesystem
+    try:
+        with open('test_file.txt', 'w') as f:
+            f.write('Test successful')
+        file_write = 'Success'
+    except Exception as e:
+        file_write = f'Error: {str(e)}'
+    
+    # Test session
+    if 'test_count' not in session:
+        session['test_count'] = 1
+    else:
+        session['test_count'] += 1
+    
+    # Return diagnostic info
+    return f'''
+    <h1>Diagnostic Page</h1>
+    <p>File write test: {file_write}</p>
+    <p>Session count: {session.get('test_count')}</p>
+    <p>Session working: {'Yes' if session.get('test_count') > 0 else 'No'}</p>
+    <p>Current working directory: {os.getcwd()}</p>
+    <p>Environment: {os.environ.get('FLASK_ENV', 'Not set')}</p>
+    '''
 
 # Run the application
 if __name__ == '__main__':
