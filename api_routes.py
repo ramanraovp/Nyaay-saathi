@@ -92,25 +92,44 @@ def handle_chat_endpoint(conversation_history):
             assistant_response = cached_response
         else:
             try:
-                # Prepare messages for my OpenAI API
+                # Prepare messages for OpenAI API
                 messages = [
                     {"role": "system", "content": SYSTEM_MESSAGE}
                 ]
                 
                 # Add conversation history (limit to last 5 messages for context length)
                 messages.extend(conversation_history[-5:])
-                
             
-                response = client.chat.completions.create(
-                    model="gpt-4",  
-                    messages=messages,
-                    temperature=0.3,  # 0.3 is mosst efficient
-                    max_tokens=1000  
-                )
+                # Check what type of client we have
+                if hasattr(client, 'chat') and hasattr(client.chat, 'completions'):
+                    # Official client, new style
+                    response = client.chat.completions.create(
+                        model="gpt-4",  
+                        messages=messages,
+                        temperature=0.3,
+                        max_tokens=1000  
+                    )
+                    assistant_response = response.choices[0].message.content
+                elif hasattr(client, 'chat_completions_create'):
+                    # Our wrapper
+                    response = client.chat_completions_create(
+                        model="gpt-4",
+                        messages=messages,
+                        temperature=0.3,
+                        max_tokens=1000
+                    )
+                    assistant_response = response.choices[0].message.content
+                else:
+                    # Old style client
+                    response = client.ChatCompletion.create(
+                        model="gpt-4",
+                        messages=messages,
+                        temperature=0.3,
+                        max_tokens=1000
+                    )
+                    assistant_response = response.choices[0]["message"]["content"]
                 
-                assistant_response = response.choices[0].message.content
-                
-                
+                # Cache the response
                 get_cached_response.cache_info()
                 get_cached_response.__wrapped__.__dict__[question_hash] = assistant_response
                 
